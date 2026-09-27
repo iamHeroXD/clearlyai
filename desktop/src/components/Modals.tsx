@@ -149,11 +149,11 @@ export const Modals: React.FC<ModalsProps> = ({
             <div className="space-y-2.5 text-xs text-[var(--ink-soft)]">
               <div className="flex items-center gap-2.5">
                 <Check className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                <span>Unlimited screen resolutions across all apps &amp; PDFs</span>
+                <span>Unlimited document analysis across all articles &amp; notes</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Check className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                <span>Sub-30ms Gemini 2.0 Flash reasoning cloud</span>
+                <span>Google Gemini 1.5 Flash cloud reasoning with custom prompts</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Check className="w-4 h-4 text-[var(--accent)] shrink-0" />
@@ -161,7 +161,7 @@ export const Modals: React.FC<ModalsProps> = ({
               </div>
               <div className="flex items-center gap-2.5">
                 <Check className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                <span>Cloud Library sync across Mac &amp; Windows</span>
+                <span>Local Vault export to Markdown, CSV &amp; Anki</span>
               </div>
             </div>
 
@@ -169,7 +169,7 @@ export const Modals: React.FC<ModalsProps> = ({
               onClick={onCloseProModal}
               className="w-full py-3 rounded-2xl bg-[var(--ink)] text-[var(--paper)] font-bold text-xs shadow-md transition-all hover:opacity-90 active:scale-95"
             >
-              Start 14-Day Free Trial
+              Got it
             </button>
           </div>
         </div>

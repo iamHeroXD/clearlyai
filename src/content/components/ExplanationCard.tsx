@@ -1,5 +1,6 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import { StructuredExplanation, ExplanationMode, normalizeLensId } from '../../types';
+import { CANONICAL_LENS_LIST } from '../../types/lenses';
 import { PositionCoordinates, Rect } from '../../services/positioning';
 
 interface ExplanationCardProps {
@@ -244,48 +245,20 @@ export const ExplanationCard: React.FC<ExplanationCardProps> = ({
 
       {/* Canonical Lenses Segmented Tabs Bar */}
       <div className="clearly-lenses-bar">
-        <button
-          type="button"
-          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'simple' ? 'active' : ''}`}
-          onClick={() => onModeSwitch('simple')}
-        >
-          Simple
-        </button>
-        <button
-          type="button"
-          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'eli5' ? 'active' : ''}`}
-          onClick={() => onModeSwitch('eli5')}
-        >
-          ELI5
-        </button>
-        <button
-          type="button"
-          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'grammar' ? 'active' : ''}`}
-          onClick={() => onModeSwitch('grammar')}
-        >
-          Grammar
-        </button>
-        <button
-          type="button"
-          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'professional' ? 'active' : ''}`}
-          onClick={() => onModeSwitch('professional')}
-        >
-          Polish
-        </button>
-        <button
-          type="button"
-          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'code' ? 'active' : ''}`}
-          onClick={() => onModeSwitch('code')}
-        >
-          Code
-        </button>
-        <button
-          type="button"
-          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'tldr' ? 'active' : ''}`}
-          onClick={() => onModeSwitch('tldr')}
-        >
-          TL;DR
-        </button>
+        {CANONICAL_LENS_LIST.map((lens) => {
+          const isActive = normalizeLensId(activeMode) === lens.id;
+          return (
+            <button
+              key={lens.id}
+              type="button"
+              className={`clearly-lens-tab ${isActive ? 'active' : ''}`}
+              onClick={() => onModeSwitch(lens.id)}
+              title={lens.description}
+            >
+              <span>{lens.icon}</span> {lens.label.split(' ')[0]}
+            </button>
+          );
+        })}
       </div>
 
       {/* Privacy Notice Box */}
@@ -318,13 +291,23 @@ export const ExplanationCard: React.FC<ExplanationCardProps> = ({
                 ? 'Clearly was updated. Please refresh this tab to reconnect.'
                 : error}
             </div>
-            <button
-              type="button"
-              className="clearly-action-btn"
-              onClick={error.includes('context invalidated') ? () => window.location.reload() : onRetry}
-            >
-              {error.includes('context invalidated') ? 'Refresh Page' : 'Retry'}
-            </button>
+            {error.toLowerCase().includes('api key') && typeof chrome !== 'undefined' && chrome.runtime?.openOptionsPage ? (
+              <button
+                type="button"
+                className="clearly-action-btn"
+                onClick={() => chrome.runtime.openOptionsPage()}
+              >
+                Configure API Key
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="clearly-action-btn"
+                onClick={error.includes('context invalidated') ? () => window.location.reload() : onRetry}
+              >
+                {error.includes('context invalidated') ? 'Refresh Page' : 'Retry'}
+              </button>
+            )}
           </div>
         )}
 

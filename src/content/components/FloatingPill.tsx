@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ExplanationMode } from '../../types';
+import { CANONICAL_LENS_LIST } from '../../types/lenses';
 import { PositionCoordinates } from '../../services/positioning';
 
 interface FloatingPillProps {
@@ -96,76 +97,19 @@ export const FloatingPill: React.FC<FloatingPillProps> = ({
 
       {menuOpen && (
         <div className="clearly-menu">
-          <button
-            type="button"
-            className="clearly-menu-item"
-            onClick={() => {
-              setMenuOpen(false);
-              onTrigger('explain');
-            }}
-          >
-            <span>✨</span> Simple Meaning
-          </button>
-          <button
-            type="button"
-            className="clearly-menu-item"
-            onClick={() => {
-              setMenuOpen(false);
-              onTrigger('define');
-            }}
-          >
-            <span>📖</span> Dictionary Definition
-          </button>
-          <button
-            type="button"
-            className="clearly-menu-item"
-            onClick={() => {
-              setMenuOpen(false);
-              onTrigger('simplify');
-            }}
-          >
-            <span>👶</span> ELI5 (Analogy)
-          </button>
-          <button
-            type="button"
-            className="clearly-menu-item"
-            onClick={() => {
-              setMenuOpen(false);
-              onTrigger('grammar');
-            }}
-          >
-            <span>✍️</span> Grammar Fix
-          </button>
-          <button
-            type="button"
-            className="clearly-menu-item"
-            onClick={() => {
-              setMenuOpen(false);
-              onTrigger('rephrase');
-            }}
-          >
-            <span>👔</span> Professional Tone
-          </button>
-          <button
-            type="button"
-            className="clearly-menu-item"
-            onClick={() => {
-              setMenuOpen(false);
-              onTrigger('code');
-            }}
-          >
-            <span>💻</span> Code &amp; Math
-          </button>
-          <button
-            type="button"
-            className="clearly-menu-item"
-            onClick={() => {
-              setMenuOpen(false);
-              onTrigger('legal');
-            }}
-          >
-            <span>⚖️</span> Scan Legal Risks
-          </button>
+          {CANONICAL_LENS_LIST.map((lens) => (
+            <button
+              key={lens.id}
+              type="button"
+              className="clearly-menu-item"
+              onClick={() => {
+                setMenuOpen(false);
+                onTrigger(lens.id);
+              }}
+            >
+              <span>{lens.icon}</span> {lens.label}
+            </button>
+          ))}
         </div>
       )}
     </div>

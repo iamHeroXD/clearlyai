@@ -84,7 +84,7 @@ Through a rigorous 5-phase engineering remediation, all simulated and misleading
 
 3. **Stale / Deprecated Model Identifiers (`src/providers/gemini.ts`, `src/services/storage.ts`)**
    - *Defect*: Defaulted to `gemini-1.5-flash-latest` which Google has marked for deprecation; storage migration contained false deprecation logic that clobbered active models.
-   - *Remediation*: Updated default to production `gemini-2.0-flash` with fallbacks to `gemini-1.5-flash` and `gemini-1.5-pro`.
+   - *Remediation*: Updated default to official production `gemini-1.5-flash` with support for `gemini-1.5-pro` via centralized `AI_MODEL_CONFIG`.
 
 4. **Prompt Injection Susceptibility in User Text Processing (`src/utils/systemPrompt.ts`)**
    - *Defect*: Raw selected text was concatenated directly into prompt strings without boundaries or security directives.

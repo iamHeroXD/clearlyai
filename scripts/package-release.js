@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import zlib from 'zlib';
+import crypto from 'crypto';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
@@ -7,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-console.log('📦 Packaging Clearly Extension & Desktop releases...');
+console.log('📦 Packaging Clearly Extension & Desktop releases (Deterministic & Cross-Platform)...');
 
 const distDir = path.resolve(rootDir, 'dist');
 const distDesktopDir = path.resolve(rootDir, 'dist-desktop');
@@ -25,7 +27,7 @@ if (!fs.existsSync(path.resolve(distDir, 'manifest.json'))) {
 
 // 2. Build Desktop if needed
 if (!fs.existsSync(path.resolve(distDesktopDir, 'index.html'))) {
-  console.log('⚙️ Building Desktop App...');
+  console.log('⚙️ Building Desktop Studio...');
   execSync('npm run build:desktop', { cwd: rootDir, stdio: 'inherit' });
 }
 
@@ -38,7 +40,6 @@ $listener.Prefixes.Add("http://localhost:$port/")
 try {
     $listener.Start()
 } catch {
-    # If already running or port busy, try next port
     $port = 8175
     $listener = New-Object System.Net.HttpListener
     $listener.Prefixes.Add("http://localhost:$port/")
@@ -94,8 +95,6 @@ while ($listener.IsListening) {
 `;
 fs.writeFileSync(path.resolve(distDesktopDir, 'run_server.ps1'), ps1Launcher);
 
-import crypto from 'crypto';
-
 // Create 1-click batch launcher
 const batLauncher = `@echo off
 title Clearly Reader Studio
@@ -114,6 +113,108 @@ Quick Start:
 4. Save key takeaways to your Library and organize study notes locally.
 `;
 fs.writeFileSync(path.resolve(distDesktopDir, 'README.txt'), desktopReadme);
+
+/**
+ * Pure Node.js cross-platform deterministic ZIP packager.
+ * Zero external CLI dependencies (works identically on Linux, macOS, and Windows).
+ * Fixed DOS timestamp guarantees byte-for-byte reproducibility.
+ */
+function createDeterministicZip(sourceDir, destZipPath) {
+  const files = [];
+
+  function walk(dir, relPath = '') {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      const entryRelPath = relPath ? `${relPath}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) {
+        walk(fullPath, entryRelPath);
+      } else if (entry.isFile()) {
+        files.push({ fullPath, relPath: entryRelPath.replace(/\\/g, '/') });
+      }
+    }
+  }
+
+  walk(sourceDir);
+  files.sort((a, b) => a.relPath.localeCompare(b.relPath));
+
+  const localHeaders = [];
+  const centralHeaders = [];
+  let offset = 0;
+
+  // Fixed DOS timestamp: 2026-01-01 00:00:00 (deterministic archive)
+  const dosTime = 0;
+  const dosDate = 0x5C21;
+
+  for (const file of files) {
+    const content = fs.readFileSync(file.fullPath);
+    const uncompressedSize = content.length;
+    const crc = zlib.crc32(content);
+    const compressedData = zlib.deflateRawSync(content);
+    const compressedSize = compressedData.length;
+    const nameBuf = Buffer.from(file.relPath, 'utf8');
+
+    // Local file header (30 bytes + name length)
+    const localHeader = Buffer.alloc(30 + nameBuf.length);
+    localHeader.writeUInt32LE(0x04034b50, 0); // Signature
+    localHeader.writeUInt16LE(20, 4);         // Version needed (2.0)
+    localHeader.writeUInt16LE(0x0800, 6);     // General purpose flag (UTF-8)
+    localHeader.writeUInt16LE(8, 8);          // Compression (Deflate)
+    localHeader.writeUInt16LE(dosTime, 10);
+    localHeader.writeUInt16LE(dosDate, 12);
+    localHeader.writeUInt32LE(crc, 14);
+    localHeader.writeUInt32LE(compressedSize, 18);
+    localHeader.writeUInt32LE(uncompressedSize, 22);
+    localHeader.writeUInt16LE(nameBuf.length, 26);
+    localHeader.writeUInt16LE(0, 28);
+    nameBuf.copy(localHeader, 30);
+
+    localHeaders.push(localHeader, compressedData);
+
+    // Central directory header (46 bytes + name length)
+    const centralHeader = Buffer.alloc(46 + nameBuf.length);
+    centralHeader.writeUInt32LE(0x02014b50, 0); // Signature
+    centralHeader.writeUInt16LE(20, 4);          // Version made by (2.0)
+    centralHeader.writeUInt16LE(20, 6);          // Version needed (2.0)
+    centralHeader.writeUInt16LE(0x0800, 8);      // UTF-8
+    centralHeader.writeUInt16LE(8, 10);          // Deflate
+    centralHeader.writeUInt16LE(dosTime, 12);
+    centralHeader.writeUInt16LE(dosDate, 14);
+    centralHeader.writeUInt32LE(crc, 16);
+    centralHeader.writeUInt32LE(compressedSize, 20);
+    centralHeader.writeUInt32LE(uncompressedSize, 24);
+    centralHeader.writeUInt16LE(nameBuf.length, 28);
+    centralHeader.writeUInt16LE(0, 30);          // Extra field length
+    centralHeader.writeUInt16LE(0, 32);          // Comment length
+    centralHeader.writeUInt16LE(0, 34);          // Disk start
+    centralHeader.writeUInt16LE(0, 36);          // Internal attributes
+    centralHeader.writeUInt32LE(0x81a40000, 38); // External attributes
+    centralHeader.writeUInt32LE(offset, 42);     // Relative offset
+    nameBuf.copy(centralHeader, 46);
+
+    centralHeaders.push(centralHeader);
+    offset += localHeader.length + compressedData.length;
+  }
+
+  const centralDirStart = offset;
+  const centralDirBuf = Buffer.concat(centralHeaders);
+  const centralDirSize = centralDirBuf.length;
+
+  // End of Central Directory record (22 bytes)
+  const eocd = Buffer.alloc(22);
+  eocd.writeUInt32LE(0x06054b50, 0);        // Signature
+  eocd.writeUInt16LE(0, 4);                 // Disk number
+  eocd.writeUInt16LE(0, 6);                 // Disk with central dir
+  eocd.writeUInt16LE(files.length, 8);      // Entries on disk
+  eocd.writeUInt16LE(files.length, 10);     // Total entries
+  eocd.writeUInt32LE(centralDirSize, 12);   // Size of central dir
+  eocd.writeUInt32LE(centralDirStart, 16);  // Offset of central dir
+  eocd.writeUInt16LE(0, 20);                // Comment length
+
+  const finalZipBuffer = Buffer.concat([...localHeaders, centralDirBuf, eocd]);
+  fs.writeFileSync(destZipPath, finalZipBuffer);
+}
 
 function computeSha256(filePath) {
   const fileBuffer = fs.readFileSync(filePath);
@@ -135,27 +236,21 @@ if (fs.existsSync(desktopZipPath)) {
 }
 
 try {
-  console.log(`🗜️ Packaging ${extensionZipPath}...`);
-  execSync(`powershell -Command "Compress-Archive -Path '${distDir.replace(/'/g, "''")}\\*' -DestinationPath '${extensionZipPath.replace(/'/g, "''")}' -Force"`, {
-    cwd: rootDir,
-    stdio: 'inherit',
-  });
+  console.log(`🗜️ Packaging ${extensionZipPath} (deterministic)...`);
+  createDeterministicZip(distDir, extensionZipPath);
   const extSha = computeSha256(extensionZipPath);
   const extStat = fs.statSync(extensionZipPath);
-  console.log(`✓ Successfully created clearly-extension-v1.0.0.zip! (SHA-256: ${extSha.slice(0, 12)}...)`);
+  console.log(`✓ Successfully created clearly-extension-v1.0.0.zip! (${extStat.size} bytes, SHA-256: ${extSha})`);
 
-  console.log(`🗜️ Packaging ${desktopZipPath}...`);
-  execSync(`powershell -Command "Compress-Archive -Path '${distDesktopDir.replace(/'/g, "''")}\\*' -DestinationPath '${desktopZipPath.replace(/'/g, "''")}' -Force"`, {
-    cwd: rootDir,
-    stdio: 'inherit',
-  });
+  console.log(`🗜️ Packaging ${desktopZipPath} (deterministic)...`);
+  createDeterministicZip(distDesktopDir, desktopZipPath);
   const deskSha = computeSha256(desktopZipPath);
   const deskStat = fs.statSync(desktopZipPath);
-  console.log(`✓ Successfully created clearly-desktop-v1.0.0-windows.zip! (SHA-256: ${deskSha.slice(0, 12)}...)`);
+  console.log(`✓ Successfully created clearly-desktop-v1.0.0-windows.zip! (${deskStat.size} bytes, SHA-256: ${deskSha})`);
 
+  // Deterministic release manifest: NO generated timestamps inside reproducible artifact
   const manifest = {
     version: '1.0.0',
-    buildDate: new Date().toISOString(),
     artifacts: [
       {
         filename: 'clearly-extension-v1.0.0.zip',
@@ -172,12 +267,11 @@ try {
 
   fs.writeFileSync(
     path.resolve(websitePublicDownloads, 'release-manifest.json'),
-    JSON.stringify(manifest, null, 2),
+    JSON.stringify(manifest, null, 2) + '\n',
     'utf8'
   );
-  console.log('✓ Successfully wrote release-manifest.json with verified checksums!');
+  console.log('✓ Successfully wrote deterministic release-manifest.json with verified checksums!');
 } catch (e) {
   console.error('Packaging error:', e);
   process.exit(1);
 }
-

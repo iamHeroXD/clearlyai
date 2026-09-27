@@ -190,11 +190,18 @@
   border-radius: var(--radius-md);
   padding: 4px;
   min-width: 170px;
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: none;
   display: flex;
   flex-direction: column;
   gap: 1px;
   z-index: 2147483647;
   animation: clearlyMenuIn 0.14s var(--ease);
+}
+
+.clearly-menu::-webkit-scrollbar {
+  display: none;
 }
 
 .clearly-menu-item {
@@ -282,6 +289,54 @@
   display: flex;
   align-items: center;
   gap: 3px;
+}
+
+/* Lenses Segmented Tabs Bar */
+.clearly-lenses-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: var(--paper-raised);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
+}
+
+.clearly-lenses-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.clearly-lens-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--gray-600);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s ease;
+}
+
+.clearly-lens-tab:hover {
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.clearly-lens-tab.active {
+  color: var(--ink);
+  background: var(--paper);
+  border-color: var(--line-strong);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .clearly-icon-btn {
@@ -665,3 +720,13 @@
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.9; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

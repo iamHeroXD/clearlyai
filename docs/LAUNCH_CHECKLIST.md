@@ -52,7 +52,7 @@ This checklist governs the release procedure for **Clearly** (`iamHeroXD/clearly
   - Real clipboard paste & analyze workflow (`handlePasteClipboard`).
   - Full canonical lens suite available for text and document analysis.
   - Integrated speech synthesis using native Web Speech API.
-  - Direct 1-click launcher (`Launch_Clearly_Desktop.bat`) included in portable ZIP.
+  - Direct 1-click launcher (`Launch_Clearly_Reader.bat`) included in portable ZIP.
 - [x] **Clean Component Architecture**:
   - 6 orphaned mock components completely removed.
   - Builds cleanly without external Rust/Tauri toolchain requirements.

@@ -23,7 +23,7 @@ Clearly is a production-grade Chrome Extension (Manifest V3) built with TypeScri
   - **🌐 Translate**: Accurate, culturally fluent translation across major languages.
 - **Clearly Reader Studio**: Standalone desktop reading workbench with clipboard integration and distraction-free document deconstruction.
 - **Smart Surrounding Context**: Intelligently inspects surrounding sentences for ambiguous terms or pronouns without scraping full pages.
-- **Pluggable AI Providers**: Native support for Google Gemini (default: `gemini-2.0-flash`), OpenAI (GPT-4o), Anthropic Claude, Ollama (local Llama 3.2), custom endpoints, and an offline demo engine.
+- **Pluggable AI Providers**: Native support for Google Gemini (default: `gemini-1.5-flash`), OpenAI (GPT-4o), Anthropic Claude, Ollama (local Llama 3.2), custom endpoints, and an offline demo engine.
 - **Zero CSS Bleed**: Floating UI is encapsulated inside a **closed Shadow DOM** ensuring complete isolation from webpage DOM scripts and styles.
 - **Strict Privacy & BYOK Security**: Zero telemetry, zero analytics, local caching, and secure header-based API key transport (`x-goog-api-key`).
 
@@ -151,7 +151,7 @@ Open Clearly Settings by clicking the extension icon → **Configure API Keys & 
 ### Google Gemini (Recommended)
 1. Get a free API key from [Google AI Studio](https://aistudio.google.com/).
 2. Select **Google Gemini** in Provider Settings and paste your key.
-3. Default model: `gemini-2.0-flash`. Authentication is sent via the secure `x-goog-api-key` header.
+3. Default model: `gemini-1.5-flash`. Authentication is sent via the secure `x-goog-api-key` header.
 
 ### OpenAI
 1. Get an API key from [platform.openai.com](https://platform.openai.com/).

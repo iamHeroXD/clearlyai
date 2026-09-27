@@ -1,16 +1,15 @@
 {
   "version": "1.0.0",
-  "buildDate": "2026-09-27T13:00:23.235Z",
   "artifacts": [
     {
       "filename": "clearly-extension-v1.0.0.zip",
-      "sizeBytes": 682984,
-      "sha256": "fea0e39de1a0d6d84a2169aff2d45450a9eefe8bbabff636e685a6ce87242b11"
+      "sizeBytes": 676129,
+      "sha256": "fdb7ab0d780f25fd0493df42995d56f88594434dbdf34edcc9272f23ded2c8b9"
     },
     {
       "filename": "clearly-desktop-v1.0.0-windows.zip",
-      "sizeBytes": 82910,
-      "sha256": "6db21901f1f3ede0f97fa00c8483f5daebe0620f925a11b068cf25faa619032e"
+      "sizeBytes": 78946,
+      "sha256": "3c9160aeec46fdaf263b20820a08d702c78fc324570f88bd7b55e58f7fcb4de4"
     }
   ]
 }

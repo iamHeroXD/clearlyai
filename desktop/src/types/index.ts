@@ -33,6 +33,8 @@ export interface StructuredExplanation {
   latencyMs: number;
   starred?: boolean;
   notes?: string;
+  isOfflineFallback?: boolean;
+  fallbackReason?: string;
 }
 
 export interface NoteItem {

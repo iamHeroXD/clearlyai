@@ -73,4 +73,79 @@ describe('AI Providers & Parser', () => {
     const legalRes = await provider.explain({ text: 'binding arbitration', mode: 'legal' }, {}, 'English');
     expect(legalRes.legalFlags?.riskLevel).toBe('high');
   });
+
+  it('AI_MODEL_CONFIG should strictly use official gemini-1.5-flash as default', async () => {
+    const { AI_MODEL_CONFIG } = await import('../src/config/models');
+    expect(AI_MODEL_CONFIG.gemini.defaultModel).toBe('gemini-1.5-flash');
+    expect(AI_MODEL_CONFIG.gemini.authHeader).toBe('x-goog-api-key');
+    const modelIds = AI_MODEL_CONFIG.gemini.models.map((m: any) => m.id);
+    expect(modelIds).toContain('gemini-1.5-flash');
+    expect(modelIds).toContain('gemini-1.5-pro');
+    expect(modelIds).not.toContain('gemini-2.0-flash');
+  });
+
+  it('formatProviderError should format auth, quota, timeout, and network errors gracefully', async () => {
+    const { formatProviderError } = await import('../src/config/models');
+
+    const authErr = formatProviderError('gemini', 'API_KEY_INVALID');
+    expect(authErr).toContain('API key is invalid');
+
+    const quotaErr = formatProviderError('gemini', 'Quota exceeded 429');
+    expect(quotaErr).toContain('rate limit reached');
+
+    const timeoutErr = formatProviderError('gemini', 'Request timed out');
+    expect(timeoutErr).toContain('timed out after 15 seconds');
+
+    const netErr = formatProviderError('gemini', 'Failed to fetch network error');
+    expect(netErr).toContain('Network connection to GEMINI failed');
+  });
+
+  describe('GeminiNanoProvider', () => {
+    it('isAvailable returns false when window.ai is missing', async () => {
+      const { GeminiNanoProvider } = await import('../src/providers/nano');
+      const provider = new GeminiNanoProvider();
+      const available = await provider.isAvailable();
+      expect(available).toBe(false);
+    });
+
+    it('explain throws helpful actionable error when window.ai is not available', async () => {
+      const { GeminiNanoProvider } = await import('../src/providers/nano');
+      const provider = new GeminiNanoProvider();
+      await expect(
+        provider.explain({ text: 'test sentence', mode: 'simple' }, {}, 'English')
+      ).rejects.toThrow('Chrome Built-in AI (Gemini Nano) is not enabled on this browser');
+    });
+
+    it('explain succeeds when mock window.ai is present', async () => {
+      const { GeminiNanoProvider } = await import('../src/providers/nano');
+      const provider = new GeminiNanoProvider();
+
+      // Mock window.ai
+      const originalAi = (globalThis as any).ai;
+      (globalThis as any).ai = {
+        languageModel: {
+          capabilities: async () => ({ available: 'readily' }),
+          create: async () => ({
+            prompt: async () => JSON.stringify({
+              mode: 'simple',
+              summary: 'Local Nano summarized text.',
+              example: 'A concrete sample.',
+            }),
+            destroy: () => {},
+          }),
+        },
+      };
+
+      try {
+        const isAvail = await provider.isAvailable();
+        expect(isAvail).toBe(true);
+
+        const res = await provider.explain({ text: 'Hello Nano', mode: 'simple' }, {}, 'English');
+        expect(res.summary).toBe('Local Nano summarized text.');
+        expect(res.example).toBe('A concrete sample.');
+      } finally {
+        (globalThis as any).ai = originalAi;
+      }
+    });
+  });
 });

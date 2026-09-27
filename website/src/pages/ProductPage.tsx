@@ -41,7 +41,7 @@ export const ProductPage: React.FC = () => {
                 Encounter dense academic abstracts, legal gotchas, or complex code. Clearly summarizes or explains it with zero disruption to your reading flow.
               </p>
               <div className="p-4 rounded-[var(--radius-md)] bg-[var(--paper-raised)] border border-[var(--line)] text-[0.875rem] text-[var(--ink)] font-mono">
-                &lt; 50ms latency • On-device or cloud
+                Fast response • Cloud AI or local Ollama
               </div>
             </div>
 
@@ -91,15 +91,15 @@ export const ProductPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Six Lenses Interactive Deep Dive */}
+      {/* Ten Lenses Interactive Deep Dive */}
       <section className="section-padding divider raised">
         <div className="container-custom">
           <div className="max-w-[34rem] mb-10 text-center mx-auto">
             <h2 className="text-[var(--text-h2)] font-semibold text-[var(--ink)]">
-              Six deliberate lenses.
+              Ten deliberate lenses.
             </h2>
             <p className="text-[1.0625rem] text-[var(--ink-soft)] mt-3">
-              One piece of text, six tailored ways to interpret or refine it.
+              One piece of text, ten canonical ways to interpret, deconstruct, or refine it.
             </p>
           </div>
 

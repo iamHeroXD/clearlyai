@@ -26,10 +26,10 @@ export const DocsPage: React.FC = () => {
         <div className="container-custom">
           <div className="max-w-[48rem] mx-auto space-y-12">
 
-            {/* 1. Six Lenses Guide */}
+            {/* 1. Ten Canonical Lenses Guide */}
             <div>
               <h2 className="text-[1.375rem] font-semibold text-[var(--ink)] mb-3">
-                1. Explanation Lenses
+                1. The 10 Canonical Explanation Lenses
               </h2>
               <div className="border border-[var(--line)] rounded-[var(--radius-lg)] overflow-hidden bg-[var(--paper)] divide-y divide-[var(--line)] text-[0.9375rem]">
                 <div className="p-5">
@@ -41,6 +41,10 @@ export const DocsPage: React.FC = () => {
                   <span className="text-[var(--ink-soft)] text-sm">Deconstructs abstract theories into relatable, everyday analogies.</span>
                 </div>
                 <div className="p-5">
+                  <strong className="text-[var(--ink)] block mb-1">Define</strong>
+                  <span className="text-[var(--ink-soft)] text-sm">Provides phonetic breakdown, IPA transcription, parts of speech, and clear contextual definitions.</span>
+                </div>
+                <div className="p-5">
                   <strong className="text-[var(--ink)] block mb-1">Grammar &amp; Polish</strong>
                   <span className="text-[var(--ink-soft)] text-sm">Fixes spelling, punctuation, and awkward phrasing while preserving your natural voice. Supports 1-click in-place replace.</span>
                 </div>
@@ -49,12 +53,24 @@ export const DocsPage: React.FC = () => {
                   <span className="text-[var(--ink-soft)] text-sm">Elevates rough notes into polished executive statements for leadership and clients.</span>
                 </div>
                 <div className="p-5">
-                  <strong className="text-[var(--ink)] block mb-1">Code &amp; Math</strong>
-                  <span className="text-[var(--ink-soft)] text-sm">Deconstructs regular expressions, algorithm complexity, and equations line by line.</span>
+                  <strong className="text-[var(--ink)] block mb-1">Code Deconstruct</strong>
+                  <span className="text-[var(--ink-soft)] text-sm">Analyzes code syntax, logic mechanisms, and scans for edge cases and potential bugs.</span>
                 </div>
                 <div className="p-5">
-                  <strong className="text-[var(--ink)] block mb-1">Roast</strong>
-                  <span className="text-[var(--ink-soft)] text-sm">Brutally honest, witty translation of corporate buzzwords and marketing spin.</span>
+                  <strong className="text-[var(--ink)] block mb-1">Math Notation</strong>
+                  <span className="text-[var(--ink-soft)] text-sm">Breaks down complex formulas, step-by-step proofs, and mathematical notation.</span>
+                </div>
+                <div className="p-5">
+                  <strong className="text-[var(--ink)] block mb-1">Legal Risk Radar</strong>
+                  <span className="text-[var(--ink-soft)] text-sm">Audits contracts and terms of service for arbitration clauses, data sale risks, and hidden liabilities.</span>
+                </div>
+                <div className="p-5">
+                  <strong className="text-[var(--ink)] block mb-1">TL;DR</strong>
+                  <span className="text-[var(--ink-soft)] text-sm">Condenses lengthy passages into exactly 3 dense, high-signal bullet takeaways.</span>
+                </div>
+                <div className="p-5">
+                  <strong className="text-[var(--ink)] block mb-1">Translate</strong>
+                  <span className="text-[var(--ink-soft)] text-sm">Fluent, culturally nuanced translations preserving idioms and tone across global languages.</span>
                 </div>
               </div>
             </div>
@@ -70,8 +86,8 @@ export const DocsPage: React.FC = () => {
                 </p>
                 <div className="p-5 rounded-[var(--radius-md)] bg-[var(--paper-raised)] border border-[var(--line)] space-y-3">
                   <div>
-                    <strong className="text-[var(--ink)] block mb-0.5">Google Gemini (Recommended):</strong>
-                    Obtain a free API key at <a href="https://aistudio.google.com" target="_blank" rel="noreferrer" className="underline text-[var(--ink)]">aistudio.google.com</a>. Offers ultra-fast sub-100ms response times.
+                    <strong className="text-[var(--ink)] block mb-0.5">Google Gemini (Recommended Default):</strong>
+                    Obtain a key at <a href="https://aistudio.google.com" target="_blank" rel="noreferrer" className="underline text-[var(--ink)]">aistudio.google.com</a>. Defaults to official stable <code className="font-mono text-xs bg-[var(--paper)] px-1 rounded">gemini-1.5-flash</code> with header-authenticated requests and optional <code className="font-mono text-xs bg-[var(--paper)] px-1 rounded">gemini-1.5-pro</code>.
                   </div>
                   <div>
                     <strong className="text-[var(--ink)] block mb-0.5">Anthropic Claude / OpenAI GPT-4o:</strong>

@@ -55,15 +55,15 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* SIX LENSES */}
+      {/* TEN LENSES */}
       <section id="lenses" className="section-padding divider">
         <div className="container-custom">
-          <div className="max-w-[34rem] mb-10 sm:mb-12 text-center mx-auto">
+          <div className="max-w-[38rem] mb-10 sm:mb-12 text-center mx-auto">
             <h2 className="text-[var(--text-h2)] font-semibold text-[var(--ink)] leading-[1.15]">
-              Six lenses. One click.
+              Ten lenses. One click.
             </h2>
             <p className="text-[1.0625rem] text-[var(--ink-soft)] mt-3 leading-[1.6]">
-              Simple, ELI5, Grammar, Professional, Code &amp; Math, and Roast — one explanation window, six ways of thinking about it.
+              Simple, ELI5, Define, Grammar, Professional, Code, Math, Legal, TL;DR, and Translate — one explanation window, ten canonical ways to deconstruct what you read.
             </p>
           </div>
 

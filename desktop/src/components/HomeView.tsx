@@ -328,16 +328,27 @@ export const HomeView: React.FC<HomeViewProps> = ({
             {/* Explanation Bubble Result (Right) */}
             <div className="md:col-span-6 p-4 rounded-2xl bg-[var(--paper-card)] border border-[var(--line-strong)] shadow-sm relative animate-fade-in flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-2 flex-wrap gap-1">
                   <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--accent)]">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span className="capitalize">In {selectedMode} terms:</span>
                   </div>
-                  {currentExplanation && (
-                    <span className="text-[10px] font-mono text-[var(--gray-500)]">
-                      {currentExplanation.latencyMs}ms
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {currentExplanation && (
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
+                        currentExplanation.isOfflineFallback
+                          ? 'bg-amber-500/10 text-amber-700 border-amber-500/20'
+                          : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
+                      }`}>
+                        {currentExplanation.isOfflineFallback ? 'Offline Heuristic' : 'Google Gemini (Cloud AI)'}
+                      </span>
+                    )}
+                    {currentExplanation && (
+                      <span className="text-[10px] font-mono text-[var(--gray-500)]">
+                        {currentExplanation.latencyMs}ms
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {isLoading ? (
@@ -347,6 +358,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   </div>
                 ) : currentExplanation ? (
                   <div className="space-y-3">
+                    {currentExplanation.isOfflineFallback && currentExplanation.fallbackReason && (
+                      <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[10.5px] text-amber-800 dark:text-amber-300">
+                        {currentExplanation.fallbackReason}
+                      </div>
+                    )}
                     <p className="text-xs text-[var(--ink)] leading-relaxed font-sans font-medium">
                       {currentExplanation.summary}
                     </p>

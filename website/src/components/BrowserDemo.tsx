@@ -166,9 +166,9 @@ export const BrowserDemo: React.FC = () => {
           </div>
           <div className="mt-3 pt-3 border-t border-[var(--glass-border)] flex items-center justify-between text-[0.8125rem]">
             <Link to="/product" className="text-[var(--gray-600)] hover:text-[var(--ink)] underline">
-              See all six lenses
+              See all 10 lenses
             </Link>
-            <span className="text-[0.75rem] font-mono text-[var(--gray-500)]">0ms Nano</span>
+            <span className="text-[0.75rem] font-mono text-[var(--gray-500)]">In-place • BYOK</span>
           </div>
         </div>
       </div>

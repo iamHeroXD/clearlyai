@@ -1,6 +1,7 @@
 import { AIProvider, parseJsonOutput } from './types';
 import { ExplanationRequest, StructuredExplanation, ProviderConfig } from '../types';
 import { buildSystemPrompt, buildUserPrompt } from '../utils/systemPrompt';
+import { AI_MODEL_CONFIG, formatProviderError } from '../config/models';
 
 export class GeminiProvider implements AIProvider {
   id = 'gemini';
@@ -14,18 +15,17 @@ export class GeminiProvider implements AIProvider {
   ): Promise<StructuredExplanation> {
     const rawKey = config.apiKey?.trim();
     if (!rawKey) {
-      throw new Error('Google Gemini API key is missing. Please set it in Extension Settings.');
+      throw new Error("Google Gemini API key is missing. Please configure your key in Extension Settings.");
     }
 
-    const requestedModel = config.model?.trim() || 'gemini-2.0-flash';
-    const baseUrl = config.endpoint?.trim() || 'https://generativelanguage.googleapis.com/v1beta/models';
+    const requestedModel = config.model?.trim() || AI_MODEL_CONFIG.gemini.defaultModel;
+    const baseUrl = config.endpoint?.trim() || AI_MODEL_CONFIG.gemini.endpoint;
 
-    // Verified production models in order of latency and capability
+    // Production-supported models from AI_MODEL_CONFIG
+    const productionModels = AI_MODEL_CONFIG.gemini.models.map((m) => m.id);
     const modelsToTry = [
       requestedModel,
-      'gemini-2.0-flash',
-      'gemini-1.5-flash',
-      'gemini-1.5-pro',
+      ...productionModels,
     ].filter((m, idx, arr) => arr.indexOf(m) === idx);
 
     const systemInstruction = customSystemPrompt || buildSystemPrompt(request, defaultLanguage);
@@ -51,8 +51,12 @@ export class GeminiProvider implements AIProvider {
     let lastErrorMessage = '';
 
     for (const modelName of modelsToTry) {
-      // Secure endpoint: do NOT append API key to URL query string; pass via x-goog-api-key header
+      // Secure transport: transmit key strictly via x-goog-api-key HTTP header
       const url = `${baseUrl}/${encodeURIComponent(modelName)}:generateContent`;
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
       try {
         const response = await fetch(url, {
           method: 'POST',
@@ -61,36 +65,54 @@ export class GeminiProvider implements AIProvider {
             'x-goog-api-key': rawKey,
           },
           body: JSON.stringify(payload),
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         if (response.ok) {
           const data = await response.json();
           const candidateText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (candidateText) {
+          if (candidateText && candidateText.trim()) {
             return parseJsonOutput(candidateText, request.mode);
           }
+          throw new Error('Received empty response from Gemini.');
         } else {
           const errorData = await response.json().catch(() => ({}));
-          const msg = errorData?.error?.message || `HTTP ${response.status}`;
-          lastErrorMessage = msg;
+          const rawMsg = errorData?.error?.message || `HTTP ${response.status}`;
+          lastErrorMessage = rawMsg;
 
-          // If API key itself is invalid, stop immediately
-          if (response.status === 400 && msg.toLowerCase().includes('api_key_invalid')) {
-            throw new Error('Invalid Gemini API Key. Check your key in Settings.');
+          // If API key is rejected, fail fast with actionable guidance
+          if (response.status === 400 && rawMsg.toLowerCase().includes('api_key_invalid')) {
+            throw new Error(formatProviderError('Gemini', 'API key is invalid. Please verify your key at aistudio.google.com.'));
           }
 
-          // Otherwise (404 deprecated model, 503 high load, 500), try next fallback model
+          if (response.status === 401 || response.status === 403) {
+            throw new Error(formatProviderError('Gemini', 'API key is unauthorized. Check your permissions or billing in Google Cloud.'));
+          }
+
+          if (response.status === 429) {
+            throw new Error(formatProviderError('Gemini', 'Rate limit exceeded. Please wait a few moments before trying again.'));
+          }
+
+          // For 404 (model not found) or 503 (transient overload), try next fallback model
           continue;
         }
       } catch (err: any) {
-        if (err.message && err.message.includes('Invalid Gemini API Key')) {
+        clearTimeout(timeoutId);
+
+        if (err.name === 'AbortError') {
+          throw new Error(formatProviderError('Gemini', 'Request timed out after 15 seconds. Please try again.'));
+        }
+
+        if (err.message && err.message.includes('API key is')) {
           throw err;
         }
-        // Network or fetch error: continue to next fallback
-        lastErrorMessage = err?.message || 'Network error';
+
+        lastErrorMessage = err?.message || 'Network connection failed.';
       }
     }
 
-    throw new Error(lastErrorMessage || 'Failed to generate explanation.');
+    throw new Error(formatProviderError('Gemini', lastErrorMessage || 'Failed to generate explanation.'));
   }
 }

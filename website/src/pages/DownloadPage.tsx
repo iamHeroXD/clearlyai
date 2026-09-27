@@ -64,24 +64,24 @@ export const DownloadPage: React.FC = () => {
                 </div>
 
                 <h2 className="text-[1.375rem] font-semibold text-[var(--ink)] tracking-tight">
-                  Clearly for Chrome & Arc
+                  Clearly for Chrome &amp; Chromium
                 </h2>
                 <p className="text-[0.9375rem] text-[var(--ink-soft)] mt-2 leading-[1.6]">
-                  Select any text on any webpage. Shadow DOM aerogel card with 6 instant lenses, pronunciation, and sub-50ms window.ai Nano acceleration.
+                  Select any text on any webpage. Isolated Shadow DOM card with 10 canonical lenses, pronunciation, and on-device or cloud AI.
                 </p>
 
                 <ul className="my-6 space-y-2.5 text-xs text-[var(--ink-soft)] font-mono">
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                    <span>Chrome, Arc, Brave, Edge & Opera</span>
+                    <span>Chrome, Edge, Brave &amp; Chromium browsers</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                    <span>Built-in Chrome Gemini Nano (Local)</span>
+                    <span>Local on-device or cloud BYOK (Gemini, Claude, OpenAI, Ollama)</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                    <span>Zero telemetry & 100% private</span>
+                    <span>Zero telemetry &amp; 100% private</span>
                   </li>
                 </ul>
               </div>
@@ -293,11 +293,11 @@ export const DownloadPage: React.FC = () => {
                   </div>
                   <h3 className="text-[1.0625rem] font-semibold text-[var(--ink)] mb-2">Run Launcher</h3>
                   <p className="text-[0.875rem] text-[var(--ink-soft)] leading-[1.5] mb-5">
-                    Double-click <code className="font-mono text-xs bg-[var(--paper-raised)] px-1 py-0.5 rounded">Launch_Clearly_Desktop.bat</code> or open <code className="font-mono text-xs bg-[var(--paper-raised)] px-1 py-0.5 rounded">index.html</code>.
+                    Double-click <code className="font-mono text-xs bg-[var(--paper-raised)] px-1 py-0.5 rounded">Launch_Clearly_Reader.bat</code> or open <code className="font-mono text-xs bg-[var(--paper-raised)] px-1 py-0.5 rounded">index.html</code>.
                   </p>
                 </div>
                 <div className="p-3 rounded-[var(--radius-md)] bg-[var(--paper-raised)] border border-[var(--line)] font-mono text-xs flex items-center justify-between">
-                  <span>Launch_Clearly_Desktop.bat</span>
+                  <span>Launch_Clearly_Reader.bat</span>
                   <span className="text-[#E1993B] font-semibold">1-Click</span>
                 </div>
               </div>
@@ -310,7 +310,7 @@ export const DownloadPage: React.FC = () => {
                   </div>
                   <h3 className="text-[1.0625rem] font-semibold text-[var(--ink)] mb-2">Start Reading</h3>
                   <p className="text-[0.875rem] text-[var(--ink-soft)] leading-[1.5] mb-5">
-                    Paste clipboard text, notes, or articles and deconstruct instantly across all 6 lenses.
+                    Paste clipboard text, notes, or articles and deconstruct instantly across all 10 canonical lenses.
                   </p>
                 </div>
                 <div className="p-3 rounded-[var(--radius-md)] bg-[#E1993B]/15 text-[#0C0C0A] dark:text-[#E1993B] font-mono text-xs flex items-center justify-between font-semibold border border-[#E1993B]/30">

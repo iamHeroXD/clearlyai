@@ -18,7 +18,7 @@ export async function explainText(
   if (apiKey && provider === 'gemini') {
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`,
         {
           method: 'POST',
           headers: {
@@ -63,8 +63,9 @@ export async function explainText(
             partOfSpeech: parsed.partOfSpeech,
             timestamp: Date.now(),
             latencyMs: Math.max(latencyMs, 40),
-            sourceApp: 'Screen Selection',
+            sourceApp: 'Reader Studio',
             starred: false,
+            isOfflineFallback: false,
           };
         }
       }
@@ -73,7 +74,7 @@ export async function explainText(
     }
   }
 
-  // High-precision local structured intelligence generator
+  // Honest local structured intelligence generator
   const generated = generateLocalStructuredExplanation(trimmed, mode, targetLang);
   const latencyMs = Math.round(performance.now() - startTime);
 
@@ -83,9 +84,13 @@ export async function explainText(
     originalText: trimmed,
     mode,
     timestamp: Date.now(),
-    latencyMs: Math.max(latencyMs, 36),
-    sourceApp: 'Screen Selection',
+    latencyMs: Math.max(latencyMs, 10),
+    sourceApp: 'Reader Studio (Offline Heuristic)',
     starred: false,
+    isOfflineFallback: true,
+    fallbackReason: apiKey
+      ? 'Cloud API request could not be completed; displaying deterministic offline heuristic'
+      : 'No API key configured; displaying deterministic offline heuristic',
   };
 }
 

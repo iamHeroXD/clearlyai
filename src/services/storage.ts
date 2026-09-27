@@ -34,10 +34,10 @@ export async function getStoredSettings(): Promise<ExtensionSettings> {
           const geminiKey = storedProviders.gemini?.apiKey ?? DEFAULT_SETTINGS.providers.gemini.apiKey;
           let geminiModel = storedProviders.gemini?.model || DEFAULT_SETTINGS.providers.gemini.model;
 
-          // Migrate obsolete draft model names to current stable production model
-          const obsoleteModels = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-3.7-flash'];
+          // Migrate obsolete or retired model names to current stable production model
+          const obsoleteModels = ['gemini-2.0-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-flash-latest'];
           if (obsoleteModels.includes(geminiModel)) {
-            geminiModel = 'gemini-2.0-flash';
+            geminiModel = 'gemini-1.5-flash';
           }
 
           const merged: ExtensionSettings = {

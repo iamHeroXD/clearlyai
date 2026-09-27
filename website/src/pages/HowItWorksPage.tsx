@@ -21,7 +21,7 @@ export const HowItWorksPage: React.FC = () => {
     {
       num: '03',
       title: 'Choose a lens',
-      desc: 'Pick how you want the text clarified: Simple, ELI5, Grammar, Professional, Code, or Roast.',
+      desc: 'Pick from 10 canonical lenses: Simple, ELI5, Define, Grammar, Professional, Code, Math, Legal, TL;DR, or Translate.',
       detail: 'Or press your default shortcut to instantly expand your favorite lens.',
     },
     {
