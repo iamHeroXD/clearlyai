@@ -149,9 +149,9 @@ export const SpeedBenchmark: React.FC = () => {
             ))}
           </div>
 
-          <div className="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono">
-            <span>Tested on Chromium 128+ with window.ai enabled</span>
-            <span className="text-slate-400">Zero round-trips when running on-device</span>
+          <div className="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 font-mono">
+            <span>* Representative lab measurements on 50-word text excerpts. Actual latency varies by network and hardware.</span>
+            <span className="text-slate-400">Zero cloud round-trips when running on-device (Nano / Ollama)</span>
           </div>
 
         </div>

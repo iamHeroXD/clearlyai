@@ -18,10 +18,13 @@ export async function explainText(
   if (apiKey && provider === 'gemini') {
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey.trim(),
+          },
           body: JSON.stringify({
             contents: [
               {
@@ -213,4 +216,19 @@ export function playTextAudio(text: string, rate: number = 1.0) {
     utterance.pitch = 1.0;
     window.speechSynthesis.speak(utterance);
   }
+}
+
+export const playTextToSpeech = playTextAudio;
+
+export async function deconstructText(
+  text: string,
+  mode: ExplanationMode = 'simple',
+  provider: string = 'gemini',
+  apiKey?: string
+): Promise<StructuredExplanation & { result: string }> {
+  const explanation = await explainText(text, mode, provider, apiKey);
+  return {
+    ...explanation,
+    result: explanation.summary || explanation.coreMeaning || text,
+  };
 }

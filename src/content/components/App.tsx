@@ -19,7 +19,7 @@ export const ContentApp: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [explanationData, setExplanationData] = useState<StructuredExplanation | null>(null);
-  const [currentMode, setCurrentMode] = useState<ExplanationMode>('explain');
+  const [currentMode, setCurrentMode] = useState<ExplanationMode>('simple');
   const [isDark, setIsDark] = useState(false);
 
   const activeReqRef = useRef<number>(0);
@@ -169,7 +169,7 @@ export const ContentApp: React.FC = () => {
 
         // Smart intent: single word/phrase -> define, sentence/longer text -> explain
         const words = selection.text.trim().split(/\s+/).filter(Boolean);
-        const defaultMode: ExplanationMode = (words.length <= 3) ? 'define' : 'explain';
+        const defaultMode: ExplanationMode = (words.length <= 3) ? 'define' : 'simple';
 
         // If Alt key was held and altKeyQuickPeek is enabled, trigger immediately
         if (isAltKeyHeld && settings.altKeyQuickPeek) {

@@ -23,7 +23,7 @@ export const Footer: React.FC = () => {
             <Link to="/docs" className="text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Docs</Link>
             <Link to="/download" className="text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Download</Link>
             <a
-              href="https://github.com"
+              href="https://github.com/iamHeroXD/clearlyai"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"

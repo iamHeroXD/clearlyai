@@ -34,10 +34,11 @@ interface HomeViewProps {
 }
 
 const QUICK_ACTIONS: { id: ExplanationMode; label: string; icon: React.FC<{ className?: string }> }[] = [
-  { id: 'simple', label: 'Explain in simple terms', icon: Lightbulb },
-  { id: 'summarize', label: 'Summarize', icon: ListOrdered },
-  { id: 'define', label: 'Define word', icon: BookOpen },
-  { id: 'example', label: 'Give example', icon: Compass },
+  { id: 'simple', label: 'Simple Terms', icon: Lightbulb },
+  { id: 'eli5', label: 'ELI5 Metaphor', icon: Compass },
+  { id: 'grammar', label: 'Grammar Fix', icon: Sparkles },
+  { id: 'professional', label: 'Polish Draft', icon: BookOpen },
+  { id: 'tldr', label: 'TL;DR Bullets', icon: ListOrdered },
   { id: 'translate', label: 'Translate', icon: Globe },
 ];
 
@@ -55,8 +56,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [isScreenSelecting, setIsScreenSelecting] = useState(false);
-  const [pdfFileName, setPdfFileName] = useState<string | null>('biology_chapter_4.pdf');
+  const [pdfFileName, setPdfFileName] = useState<string | null>('sample_reading.txt');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Live Canvas Interactive State
@@ -117,13 +117,20 @@ export const HomeView: React.FC<HomeViewProps> = ({
     }
   };
 
-  const handleStartScreenSelection = () => {
-    setIsScreenSelecting(true);
-    onShowToast('Screen selection active. Capturing active region...', 'info');
-    setTimeout(() => {
-      setIsScreenSelecting(false);
-      onShowToast('Captured text from active screen!', 'success');
-    }, 1500);
+  const handlePasteClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text.trim()) {
+        setInputText(text.trim());
+        setCanvasSelectedText(text.trim());
+        handleRunExplain(text.trim(), selectedMode);
+        onShowToast('Pasted and analyzed from clipboard', 'success');
+      } else {
+        onShowToast('Clipboard is empty', 'info');
+      }
+    } catch {
+      onShowToast('Clipboard read was blocked. Please paste into the search input.', 'info');
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -261,7 +268,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <div className="flex items-center gap-2 text-xs font-serif italic text-[var(--ink)]">
               <MousePointer className="w-3.5 h-3.5 text-[var(--accent)]" />
-              <span>Screen Region &amp; PDF Reader:</span>
+              <span>Document &amp; Reading Studio:</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -276,23 +283,20 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <button
                 onClick={() => fileInputRef.current?.click()}
                 className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[var(--paper-raised)] hover:bg-[var(--paper-hover)] border border-[var(--line)] text-[var(--ink-soft)] hover:text-[var(--ink)] transition-all"
-                title="Drop or upload local PDF / Document"
+                title="Drop or upload local Document / Text file"
               >
                 <UploadCloud className="w-3.5 h-3.5 text-[var(--accent)]" />
-                <span>Open PDF / Doc</span>
+                <span>Open File</span>
               </button>
 
-              {/* Screen Area Capture */}
+              {/* Paste & Analyze Button */}
               <button
-                onClick={handleStartScreenSelection}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                  isScreenSelecting
-                    ? 'bg-red-500/20 text-red-600 border border-red-500/40 animate-pulse'
-                    : 'bg-[var(--accent-soft)] hover:bg-[var(--accent-soft-strong)] text-[var(--accent)] border border-[var(--accent)]/30'
-                }`}
+                onClick={handlePasteClipboard}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--accent-soft)] hover:bg-[var(--accent-soft-strong)] text-[var(--accent)] border border-[var(--accent)]/30 transition-all"
+                title="Paste text from clipboard and analyze"
               >
-                <Scan className="w-3.5 h-3.5" />
-                <span>{isScreenSelecting ? 'Capturing Screen...' : 'Capture Region'}</span>
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Paste &amp; Analyze</span>
               </button>
             </div>
           </div>
@@ -306,7 +310,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   <span className="w-2 h-2 rounded-full bg-red-400"></span>
                   <span className="w-2 h-2 rounded-full bg-amber-400"></span>
                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                  <span className="ml-1 font-medium text-[var(--ink)]">{pdfFileName || 'active_document.pdf'}</span>
+                  <span className="ml-1 font-medium text-[var(--ink)]">{pdfFileName || 'active_document.txt'}</span>
                 </div>
                 <p className="line-clamp-6">
                   <mark className="bg-[var(--accent-soft-strong)] text-[var(--ink)] rounded px-1 py-0.5 font-medium">
@@ -316,8 +320,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
 
               <div className="mt-3 pt-2 border-t border-[var(--line)] text-[10px] font-mono text-[var(--gray-500)] flex items-center justify-between">
-                <span>Native PDF / Screen Reader</span>
-                <span className="text-emerald-600 font-semibold">Active</span>
+                <span>Clearly Reading Workbench</span>
+                <span className="text-emerald-600 font-semibold">Ready</span>
               </div>
             </div>
 

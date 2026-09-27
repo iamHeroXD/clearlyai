@@ -12,52 +12,52 @@ interface FeatureComparison {
 
 const COMPARISONS: FeatureComparison[] = [
   {
-    feature: 'Liquid Glass Floating UI (Zero Clutter)',
-    clearly: 'Yes — Non-intrusive',
-    grammarly: 'Heavy Badges Everywhere',
-    chatgptExt: 'Full Page Sidebar',
-    dictExt: 'Ugly 2010 Popup'
+    feature: 'In-Page Isolated Floating Card (Shadow DOM)',
+    clearly: 'Yes — Shadow DOM isolated',
+    grammarly: 'Inline badges & underlines',
+    chatgptExt: 'Full browser sidebar',
+    dictExt: 'Toolbar popup window'
   },
   {
-    feature: '0ms On-Device Gemini Nano AI',
+    feature: 'On-Device AI Support (Chrome Gemini Nano)',
     clearly: true,
     grammarly: false,
     chatgptExt: false,
     dictExt: false
   },
   {
-    feature: '1-Click In-Place Writing Replacement',
+    feature: '1-Click In-Place Text Replacement',
     clearly: true,
     grammarly: true,
     chatgptExt: false,
     dictExt: false
   },
   {
-    feature: '100% Privacy & Zero Telemetry',
+    feature: 'Private Direct-to-Provider Requests (Zero Analytics)',
     clearly: true,
-    grammarly: 'Logs text to cloud',
-    chatgptExt: 'Cloud account required',
-    dictExt: true
+    grammarly: 'Account & cloud processing',
+    chatgptExt: 'Account required',
+    dictExt: 'Varies by provider'
   },
   {
-    feature: 'Multi-Model Freedom (Claude, GPT-4o, Ollama)',
+    feature: 'Multi-Provider BYOK (Gemini, Claude, GPT, Ollama)',
     clearly: true,
     grammarly: false,
     chatgptExt: 'OpenAI only',
     dictExt: false
   },
   {
-    feature: 'IPA Phonetics & Native Pronunciation',
+    feature: 'IPA Phonetics & Native Speech Synthesis',
     clearly: true,
     grammarly: false,
     chatgptExt: false,
-    dictExt: 'Audio only'
+    dictExt: 'Audio pronunciation'
   },
   {
-    feature: 'ELI5 & Sarcastic Tone Translation',
+    feature: 'ELI5, Legal Gotchas & 6+ Canonical Lenses',
     clearly: true,
     grammarly: false,
-    chatgptExt: 'Manual typing',
+    chatgptExt: 'Requires manual prompting',
     dictExt: false
   },
   {

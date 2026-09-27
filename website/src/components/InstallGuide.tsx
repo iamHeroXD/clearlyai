@@ -45,7 +45,7 @@ export const InstallGuide: React.FC = () => {
               </a>
 
               <a
-                href="https://github.com"
+                href="https://github.com/iamHeroXD/clearlyai"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => sound.playClick()}

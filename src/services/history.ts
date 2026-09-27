@@ -6,13 +6,23 @@ const MAX_HISTORY_ITEMS = 200;
 export async function getHistory(): Promise<HistoryItem[]> {
   return new Promise((resolve) => {
     if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.local) {
-      const local = localStorage.getItem(HISTORY_STORAGE_KEY);
-      resolve(local ? JSON.parse(local) : []);
+      try {
+        const local = localStorage.getItem(HISTORY_STORAGE_KEY);
+        const parsed = local ? JSON.parse(local) : [];
+        resolve(Array.isArray(parsed) ? parsed : []);
+      } catch {
+        resolve([]);
+      }
       return;
     }
 
     chrome.storage.local.get([HISTORY_STORAGE_KEY], (res) => {
-      resolve(res[HISTORY_STORAGE_KEY] || []);
+      if (chrome.runtime.lastError) {
+        resolve([]);
+        return;
+      }
+      const raw = res[HISTORY_STORAGE_KEY];
+      resolve(Array.isArray(raw) ? raw : []);
     });
   });
 }

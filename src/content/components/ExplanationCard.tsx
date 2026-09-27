@@ -1,5 +1,5 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
-import { StructuredExplanation, ExplanationMode } from '../../types';
+import { StructuredExplanation, ExplanationMode, normalizeLensId } from '../../types';
 import { PositionCoordinates, Rect } from '../../services/positioning';
 
 interface ExplanationCardProps {
@@ -242,46 +242,46 @@ export const ExplanationCard: React.FC<ExplanationCardProps> = ({
         </div>
       </div>
 
-      {/* 6 Lenses Segmented Tabs Bar */}
+      {/* Canonical Lenses Segmented Tabs Bar */}
       <div className="clearly-lenses-bar">
         <button
           type="button"
-          className={`clearly-lens-tab ${activeMode === 'explain' || activeMode === 'define' ? 'active' : ''}`}
-          onClick={() => onModeSwitch('explain')}
+          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'simple' ? 'active' : ''}`}
+          onClick={() => onModeSwitch('simple')}
         >
           Simple
         </button>
         <button
           type="button"
-          className={`clearly-lens-tab ${activeMode === 'simplify' ? 'active' : ''}`}
-          onClick={() => onModeSwitch('simplify')}
+          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'eli5' ? 'active' : ''}`}
+          onClick={() => onModeSwitch('eli5')}
         >
           ELI5
         </button>
         <button
           type="button"
-          className={`clearly-lens-tab ${activeMode === 'grammar' ? 'active' : ''}`}
+          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'grammar' ? 'active' : ''}`}
           onClick={() => onModeSwitch('grammar')}
         >
           Grammar
         </button>
         <button
           type="button"
-          className={`clearly-lens-tab ${activeMode === 'rephrase' ? 'active' : ''}`}
-          onClick={() => onModeSwitch('rephrase')}
+          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'professional' ? 'active' : ''}`}
+          onClick={() => onModeSwitch('professional')}
         >
-          Professional
+          Polish
         </button>
         <button
           type="button"
-          className={`clearly-lens-tab ${activeMode === 'code' || activeMode === 'math' ? 'active' : ''}`}
+          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'code' ? 'active' : ''}`}
           onClick={() => onModeSwitch('code')}
         >
           Code
         </button>
         <button
           type="button"
-          className={`clearly-lens-tab ${activeMode === 'tldr' ? 'active' : ''}`}
+          className={`clearly-lens-tab ${normalizeLensId(activeMode) === 'tldr' ? 'active' : ''}`}
           onClick={() => onModeSwitch('tldr')}
         >
           TL;DR
@@ -291,7 +291,7 @@ export const ExplanationCard: React.FC<ExplanationCardProps> = ({
       {/* Privacy Notice Box */}
       {showPrivacy && (
         <div className="clearly-privacy-box">
-          <strong>Your words stay yours.</strong> Only selected text is processed. Never tracks full history or webpage contents.
+          <strong>Your words stay yours.</strong> Direct client-to-model requests with zero tracking pixels or analytics. Surrounding context is forwarded only when enabled in Settings to resolve pronouns.
         </div>
       )}
 

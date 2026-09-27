@@ -65,10 +65,11 @@ export const PrivacyPage: React.FC = () => {
               <p className="text-[0.9375rem] text-[var(--ink-soft)] leading-[1.7] mb-4">
                 When you highlight text and trigger an explanation using a cloud provider (such as Gemini 2.0, GPT-4o mini, or Claude 3.5 Sonnet):
               </p>
-              <ul className="list-disc pl-5 space-y-2 text-[0.9375rem] text-[var(--ink-soft)] leading-[1.6]">
-                <li>Only the highlighted text snippet and the chosen lens prompt are sent to the AI model endpoint.</li>
-                <li>The rest of the webpage, URL history, tabs, cookies, and local identifiers are <strong>never</strong> transmitted.</li>
-                <li>When using on-device models (Chrome Gemini Nano or local Ollama), <strong>zero network requests</strong> leave your computer.</li>
+              <ul className="list-disc pl-5 space-y-2.5 text-[0.9375rem] text-[var(--ink-soft)] leading-[1.6]">
+                <li><strong>Selected Text:</strong> The highlighted text snippet and the chosen lens prompt are sent directly from your browser to your selected AI provider endpoint.</li>
+                <li><strong>Surrounding Context (Optional):</strong> If "Include Surrounding Context" is enabled in Extension Settings (default: enabled), Clearly attaches the immediate sentence before and after your selection so the model can resolve pronouns ("it", "they") without scraping the full page. You can disable this anytime in Settings.</li>
+                <li><strong>Local-Only History & Metadata:</strong> When history is enabled, page titles and URLs are recorded strictly inside your local browser storage (<code className="font-mono text-xs bg-[var(--paper)] px-1.5 py-0.5 rounded border border-[var(--line)]">chrome.storage.local</code>) for your personal reference. This data never leaves your device and is never sent to any Clearly server.</li>
+                <li><strong>On-Device Local Inference:</strong> When using on-device models (Chrome Gemini Nano or local Ollama), <strong>zero network requests</strong> leave your computer.</li>
               </ul>
             </div>
 

@@ -43,7 +43,7 @@ export class MockProvider implements AIProvider {
       };
     }
 
-    if (mode === 'rephrase' || mode === 'concise' || mode === 'expand' || mode === 'grammar') {
+    if (mode === 'rephrase' || mode === 'concise' || mode === 'expand' || mode === 'grammar' || mode === 'professional') {
       let rewritten = text;
       if (mode === 'grammar') {
         rewritten = text
@@ -55,6 +55,8 @@ export class MockProvider implements AIProvider {
           rewritten = text.charAt(0).toUpperCase() + text.slice(1);
           if (!rewritten.endsWith('.')) rewritten += '.';
         }
+      } else if (mode === 'professional') {
+        rewritten = `We have verified that ${text.toLowerCase()}`;
       } else if (mode === 'rephrase') {
         rewritten = `In other words: ${text}`;
       } else if (mode === 'concise') {
@@ -101,11 +103,12 @@ export class MockProvider implements AIProvider {
       };
     }
 
-    if (mode === 'simplify') {
+    if (mode === 'simplify' || mode === 'eli5') {
       return {
-        mode: 'simplify',
-        title: 'Simplified Version',
-        summary: 'Rewritten into direct, plain English for immediate clarity.',
+        mode: 'eli5',
+        title: 'ELI5 Analogy',
+        summary: `${text.slice(0, 60)}... explained simply: think of it like a battery keeping a flashlight glowing in the dark.`,
+        example: 'Like water running downhill through pipes.',
         simplifiedText: `In simple terms: ${text.replace(/necessitates|utilize|consequently/gi, 'needs')}`,
       };
     }
@@ -146,7 +149,7 @@ export class MockProvider implements AIProvider {
 
     // Default concept / general explanation
     return {
-      mode: 'explain',
+      mode: (mode as any) || 'simple',
       title: 'Explanation',
       summary: `${text.slice(0, 80)}... explained simply: it represents the core mechanism or fact described in your selection.`,
       example: 'Think of it like a puzzle piece connecting the broader context together.',

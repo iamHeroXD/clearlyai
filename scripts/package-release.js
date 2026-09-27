@@ -94,29 +94,33 @@ while ($listener.IsListening) {
 `;
 fs.writeFileSync(path.resolve(distDesktopDir, 'run_server.ps1'), ps1Launcher);
 
+import crypto from 'crypto';
+
 // Create 1-click batch launcher
 const batLauncher = `@echo off
-title Clearly Desktop OS
-echo Starting Clearly Ambient Desktop Engine...
+title Clearly Reader Studio
+echo Starting Clearly Reader Studio local workspace...
 powershell -ExecutionPolicy Bypass -File "%~dp0run_server.ps1"
 `;
-fs.writeFileSync(path.resolve(distDesktopDir, 'Launch_Clearly_Desktop.bat'), batLauncher);
+fs.writeFileSync(path.resolve(distDesktopDir, 'Launch_Clearly_Reader.bat'), batLauncher);
 
-const desktopReadme = `Clearly Desktop — Ambient Screen Intelligence & Text Deconstruction
-Version 1.0.0 (Windows x64 / Cross-Platform)
+const desktopReadme = `Clearly Reader Studio — Local Document & Deep Reading Workbench
+Version 1.0.0 (Windows / Portable)
 
 Quick Start:
-1. Double-click "Launch_Clearly_Desktop.bat".
-2. A native standalone desktop window will launch instantly at http://localhost:8174.
-3. Use the Global Screen Controller to highlight or snip any text across your desktop apps (PDFs, VS Code, Slack, Terminal).
-4. Switch between 6 instant lenses: Polish, Meaning, Simplify, Deconstruct, Counter-argument, and Translation.
-5. Press Alt+Space or Ctrl+Shift+C anytime to launch the floating Spotlight HUD.
-
-Online Edition:
-You can also use the live Web App version directly without downloading at:
-https://clearly-ai-lake.vercel.app/app
+1. Double-click "Launch_Clearly_Reader.bat".
+2. Clearly Reader Studio will launch in a dedicated application window at http://localhost:8174.
+3. Open any local text or Markdown file, or paste excerpts to deconstruct them across Clearly's canonical lenses.
+4. Save key takeaways to your Library and organize study notes locally.
 `;
 fs.writeFileSync(path.resolve(distDesktopDir, 'README.txt'), desktopReadme);
+
+function computeSha256(filePath) {
+  const fileBuffer = fs.readFileSync(filePath);
+  const hashSum = crypto.createHash('sha256');
+  hashSum.update(fileBuffer);
+  return hashSum.digest('hex');
+}
 
 // Package Extension ZIP
 const extensionZipPath = path.resolve(websitePublicDownloads, 'clearly-extension-v1.0.0.zip');
@@ -136,14 +140,44 @@ try {
     cwd: rootDir,
     stdio: 'inherit',
   });
-  console.log('✓ Successfully created clearly-extension-v1.0.0.zip!');
+  const extSha = computeSha256(extensionZipPath);
+  const extStat = fs.statSync(extensionZipPath);
+  console.log(`✓ Successfully created clearly-extension-v1.0.0.zip! (SHA-256: ${extSha.slice(0, 12)}...)`);
 
   console.log(`🗜️ Packaging ${desktopZipPath}...`);
   execSync(`powershell -Command "Compress-Archive -Path '${distDesktopDir.replace(/'/g, "''")}\\*' -DestinationPath '${desktopZipPath.replace(/'/g, "''")}' -Force"`, {
     cwd: rootDir,
     stdio: 'inherit',
   });
-  console.log('✓ Successfully created clearly-desktop-v1.0.0-windows.zip!');
+  const deskSha = computeSha256(desktopZipPath);
+  const deskStat = fs.statSync(desktopZipPath);
+  console.log(`✓ Successfully created clearly-desktop-v1.0.0-windows.zip! (SHA-256: ${deskSha.slice(0, 12)}...)`);
+
+  const manifest = {
+    version: '1.0.0',
+    buildDate: new Date().toISOString(),
+    artifacts: [
+      {
+        filename: 'clearly-extension-v1.0.0.zip',
+        sizeBytes: extStat.size,
+        sha256: extSha,
+      },
+      {
+        filename: 'clearly-desktop-v1.0.0-windows.zip',
+        sizeBytes: deskStat.size,
+        sha256: deskSha,
+      },
+    ],
+  };
+
+  fs.writeFileSync(
+    path.resolve(websitePublicDownloads, 'release-manifest.json'),
+    JSON.stringify(manifest, null, 2),
+    'utf8'
+  );
+  console.log('✓ Successfully wrote release-manifest.json with verified checksums!');
 } catch (e) {
   console.error('Packaging error:', e);
+  process.exit(1);
 }
+

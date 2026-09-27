@@ -1,0 +1,55 @@
+name: CI / Production Build Verification
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-verify:
+    name: Lint, Test, and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck extension codebase
+        run: npx tsc --noEmit
+
+      - name: Run test suite
+        run: npm test
+
+      - name: Build Chrome Extension
+        run: npm run build
+
+      - name: Build Clearly Website
+        run: npm run build:website
+
+      - name: Build Clearly Desktop
+        run: npm run build:desktop
+
+      - name: Package Release Bundles & Manifest
+        run: npm run package
+
+      - name: Verify Distribution Artifacts
+        run: |
+          test -f dist/manifest.json || exit 1
+          test -f dist/background.js || exit 1
+          test -f dist/content.js || exit 1
+          test -f dist-website/index.html || exit 1
+          test -f dist-desktop/index.html || exit 1
+          test -f website/public/downloads/release-manifest.json || exit 1
+          test -f website/public/downloads/clearly-extension-v1.0.0.zip || exit 1
+          test -f website/public/downloads/clearly-desktop-v1.0.0-windows.zip || exit 1
+          echo "All release artifacts verified successfully."

@@ -24,7 +24,7 @@ export function getOrCreateShadowRoot(): { shadowRoot: ShadowRoot; container: HT
   host.style.zIndex = '2147483647';
   host.style.overflow = 'visible';
 
-  const shadowRoot = host.attachShadow({ mode: 'open' });
+  const shadowRoot = host.attachShadow({ mode: 'closed' });
 
   const styleTag = document.createElement('style');
   styleTag.textContent = shadowStyles;

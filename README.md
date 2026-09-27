@@ -8,27 +8,24 @@ Clearly is a production-grade Chrome Extension (Manifest V3) built with TypeScri
 
 ## Key Features
 
-- **Micro-Action Trigger**: Highlight text, and a tiny `[ ✨ Explain ]` pill appears near your cursor.
+- **Micro-Action Trigger**: Highlight text, and a lightweight `[ ✨ Explain ]` pill appears near your cursor.
 - **In-Page Floating Card**: Fast, non-intrusive explanation card positioned intelligently with collision detection.
-- **Smart Modes**:
-  - **In Simple Terms**: 1-2 easy sentences with real-world examples and why it matters.
-  - **⚡ Simplify**: Plain English rewrite preserving core technical accuracy.
-  - **📖 Define**: Clear dictionary definitions, natural usage sentences, and synonyms.
-  - **💻 Code Analysis**: Explains what the code does, key parts, and potential issues (supports JS, TS, Python, SQL, C++, HTML/CSS, Rust, Go, Bash, JSON).
+- **10 Canonical Lenses**:
+  - **✨ Simple Terms**: 1-2 easy sentences with real-world examples and why it matters.
+  - **🐣 ELI5 Analogy**: Vivid everyday analogies explaining complex concepts to anyone.
+  - **📖 Definition**: Precise dictionary breakdown, phonetic pronunciation, part of speech, and usage.
+  - **✍️ Grammar & Tone**: 1-click typo, punctuation, and phrasing fixes ready for replacement.
+  - **💼 Professional**: Executive, active-voice polish for emails, PRs, and briefs.
+  - **💻 Code Analysis**: Programming language detection, key mechanisms, and bug pitfall scan.
   - **📐 Mathematics**: Solves and explains equations, formulas, and LaTeX notations step-by-step.
-  - **🎓 Learning Mode**: Student-optimized explanations with analogies, key takeaways, and interactive mini-quizzes.
-  - **🌐 Translate**: Accurate multilingual translation across major global languages.
-- **Smart Surrounding Context**: Intelligently inspects surrounding sentences for ambiguous terms or pronouns ("it", "they") without scraping full pages.
-- **Pluggable AI Providers**: Native support for:
-  - Google Gemini (Gemini 1.5 Flash / 2.0 Flash / Pro)
-  - OpenAI (GPT-4o mini / GPT-4o)
-  - Anthropic Claude (Claude 3.5 Haiku / Sonnet)
-  - Ollama (100% private local models like Llama 3.2)
-  - Custom REST Endpoints (OpenAI-compatible, OpenRouter, Groq, Together AI)
-  - Built-in Demo Engine (Offline heuristics for immediate testing)
-- **Zero CSS Bleed**: Floating UI is encapsulated inside a **closed Shadow DOM** to ensure webpage styles cannot break extension styles, and vice versa.
-- **Strict Privacy**: Zero tracking, zero analytics, zero full-page scraping, local-only LRU caching, and direct browser-to-provider API calls.
-- **Accessibility & Speech**: Keyboard navigation, `Ctrl+Shift+E` shortcut, right-click context menu, and built-in text-to-speech audio reader.
+  - **⚖️ Contract Risk**: Plain-language scan for mandatory arbitration, liability waivers, and data selling traps.
+  - **⚡ TL;DR Bullets**: Exactly 3 dense, high-signal takeaway bullet points.
+  - **🌐 Translate**: Accurate, culturally fluent translation across major languages.
+- **Clearly Reader Studio**: Standalone desktop reading workbench with clipboard integration and distraction-free document deconstruction.
+- **Smart Surrounding Context**: Intelligently inspects surrounding sentences for ambiguous terms or pronouns without scraping full pages.
+- **Pluggable AI Providers**: Native support for Google Gemini (default: `gemini-2.0-flash`), OpenAI (GPT-4o), Anthropic Claude, Ollama (local Llama 3.2), custom endpoints, and an offline demo engine.
+- **Zero CSS Bleed**: Floating UI is encapsulated inside a **closed Shadow DOM** ensuring complete isolation from webpage DOM scripts and styles.
+- **Strict Privacy & BYOK Security**: Zero telemetry, zero analytics, local caching, and secure header-based API key transport (`x-goog-api-key`).
 
 ---
 
@@ -95,8 +92,20 @@ Clearly is a production-grade Chrome Extension (Manifest V3) built with TypeScri
     ├── mathDetector.test.ts
     ├── positioning.test.ts
     ├── cache.test.ts
-    └── providers.test.ts
+    ├── providers.test.ts
+    ├── validation.test.ts
+    ├── lenses.test.ts
+    └── integration.test.ts
 ```
+
+---
+
+## Production Documentation & Audit
+
+For complete architectural details, security assessments, and release procedures:
+- [Forensic Production Audit](docs/PRODUCTION_AUDIT.md) — Comprehensive vulnerability and remediation analysis.
+- [Launch Checklist & Release Protocol](docs/LAUNCH_CHECKLIST.md) — Multi-gate verification criteria and publishing steps.
+- [Final Production Report](docs/FINAL_PRODUCTION_REPORT.md) — Principal engineer sign-off and verification proof.
 
 ---
 
@@ -107,16 +116,21 @@ Clearly is a production-grade Chrome Extension (Manifest V3) built with TypeScri
 npm install
 ```
 
-### 2. Run Tests
+### 2. Run Test Suite
 ```bash
 npm test
 ```
+Executes all 45 automated unit and integration tests across 9 test suites via Vitest.
 
-### 3. Build Extension
+### 3. Build Everything (Extension, Desktop Studio, Website & Packages)
 ```bash
-npm run build
+npm run build:all
 ```
-This outputs the compiled extension bundle into the `dist/` folder.
+This triggers:
+- `npm run build`: Compiles Chrome Extension into `dist/`
+- `npm run build:website`: Compiles Website into `dist-website/`
+- `npm run build:desktop`: Compiles Reader Studio into `dist-desktop/`
+- `npm run package`: Generates standalone ZIP archives and `release-manifest.json` with SHA-256 checksums.
 
 ---
 
@@ -137,7 +151,7 @@ Open Clearly Settings by clicking the extension icon → **Configure API Keys & 
 ### Google Gemini (Recommended)
 1. Get a free API key from [Google AI Studio](https://aistudio.google.com/).
 2. Select **Google Gemini** in Provider Settings and paste your key.
-3. Default model: `gemini-1.5-flash`.
+3. Default model: `gemini-2.0-flash`. Authentication is sent via the secure `x-goog-api-key` header.
 
 ### OpenAI
 1. Get an API key from [platform.openai.com](https://platform.openai.com/).

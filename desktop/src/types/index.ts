@@ -1,12 +1,18 @@
 export type ExplanationMode = 
   | 'simple' 
+  | 'eli5'
+  | 'define'
+  | 'grammar'
+  | 'professional'
+  | 'code'
+  | 'math'
+  | 'legal'
+  | 'tldr'
+  | 'translate'
   | 'summarize' 
-  | 'define' 
   | 'example' 
-  | 'translate' 
   | 'keypoints' 
-  | 'polish' 
-  | 'code';
+  | 'polish';
 
 export interface StructuredExplanation {
   id: string;

@@ -1,21 +1,7 @@
-export type AIProviderType = 'gemini' | 'nano' | 'openai' | 'anthropic' | 'ollama' | 'custom' | 'mock';
+import { CanonicalLensId, ExplanationMode } from './lenses';
 
-export type ExplanationMode = 
-  | 'explain' 
-  | 'simplify' 
-  | 'define' 
-  | 'translate' 
-  | 'code' 
-  | 'math' 
-  | 'learning' 
-  | 'summarize'
-  | 'rephrase'
-  | 'concise'
-  | 'expand'
-  | 'legal'
-  | 'tldr'
-  | 'roast'
-  | 'grammar';
+export type { CanonicalLensId, ExplanationMode };
+export type AIProviderType = 'gemini' | 'nano' | 'openai' | 'anthropic' | 'ollama' | 'custom' | 'mock';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
 
@@ -54,15 +40,17 @@ export interface ExtensionSettings {
   cacheEnabled: boolean;
   includeSurroundingContext: boolean;
   customSystemPrompt?: string;
+  _version?: number;
 }
 
 export const DEFAULT_SETTINGS: ExtensionSettings = {
+  _version: 1,
   enabled: true,
   activeProvider: 'gemini',
   providers: {
     gemini: {
       apiKey: '',
-      model: 'gemini-flash-lite-latest',
+      model: 'gemini-2.0-flash',
       endpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
     },
     nano: {

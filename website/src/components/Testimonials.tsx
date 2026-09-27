@@ -5,33 +5,33 @@ import { sound } from '../utils/sound';
 export const Testimonials: React.FC = () => {
   const reviews = [
     {
-      name: 'Dr. Elena Rostova',
-      role: 'Staff AI Researcher, Autonomous Systems',
-      initials: 'ER',
+      name: 'Research & Academic Papers',
+      role: 'Mathematical lemmas & technical literature',
+      initials: 'RP',
       gradient: 'from-cyan-500 to-indigo-600',
-      badge: 'Academic & Papers',
-      content: 'I read 15-20 machine learning preprints a week. Clearly’s ELI5 and Simple modes explain dense math lemmas in seconds. And because it runs Gemini Nano on-device, it feels instant.',
-      metric: 'Saved 6+ hrs/week',
+      badge: 'Academic Reading',
+      content: 'Digest dense papers, arXiv preprints, and unfamiliar terminology without switching tabs. ELI5 and Simple lenses translate complex notation into immediate intuition.',
+      metric: 'Instant Metaphors',
       rating: 5,
     },
     {
-      name: 'Marcus Vance',
-      role: 'Founding Engineer @ VectorScale',
-      initials: 'MV',
+      name: 'Code & Technical Documentation',
+      role: 'APIs, algorithms & regex explanations',
+      initials: 'CD',
       gradient: 'from-indigo-500 to-purple-600',
-      badge: 'Code & Writing',
-      content: 'The 1-click in-place rewrite inside GitHub PRs and Slack is phenomenal. I don’t have to copy-paste back and forth from ChatGPT sidebars anymore. It just fixes the sentence right where I typed it.',
-      metric: '10x Faster PR Comments',
+      badge: 'Engineering',
+      content: 'Explain cryptic error traces, SQL queries, or complex code snippets directly in your browser. Highlights key mechanisms and potential edge cases.',
+      metric: 'Code Lens',
       rating: 5,
     },
     {
-      name: 'Sarah Chen, Esq.',
-      role: 'Fintech Corporate Counsel',
-      initials: 'SC',
+      name: 'Agreements & Terms of Service',
+      role: 'Risk scanning & plain-language contract review',
+      initials: 'TO',
       gradient: 'from-purple-500 to-rose-600',
-      badge: 'Legal & Risk Review',
-      content: 'Scanning 80-page vendor SaaS agreements for aggressive IP transfer clauses used to take hours. Clearly highlights the gotchas and flags hidden traps in 1-click. Zero telemetry means my client data stays safe.',
-      metric: 'Zero Data Leaks',
+      badge: 'Risk Analysis',
+      content: 'Scan lengthy SaaS contracts and user policies for mandatory arbitration, liability waivers, and telemetry disclosures before agreeing.',
+      metric: 'Contract Gotchas',
       rating: 5,
     }
   ];
@@ -43,14 +43,14 @@ export const Testimonials: React.FC = () => {
         {/* Heading */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-semibold mb-4 backdrop-blur-md">
-            <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span>Loved by 12,000+ Researchers & Engineers</span>
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>Built for Dense Reading Workflows</span>
           </div>
           <h2 className="text-4xl sm:text-6xl font-display font-extrabold text-white tracking-tight">
             Clear thinkers read faster.
           </h2>
           <p className="mt-4 text-slate-300 text-base sm:text-xl">
-            Hear from researchers, engineers, and executives who turned information overload into instantaneous clarity.
+            Turn dense text, unfamiliar terminology, and complex documentation into immediate, effortless understanding.
           </p>
         </div>
 

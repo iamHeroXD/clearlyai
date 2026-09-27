@@ -23,34 +23,43 @@ export async function getStoredSettings(): Promise<ExtensionSettings> {
       if (chrome.runtime.lastError || !result[SETTINGS_KEY]) {
         resolve(DEFAULT_SETTINGS);
       } else {
-        const stored = result[SETTINGS_KEY] || {};
-        const storedProviders = stored.providers || {};
-        
-        // Ensure default gemini key is used if stored key is empty
-        const geminiKey = storedProviders.gemini?.apiKey || DEFAULT_SETTINGS.providers.gemini.apiKey;
-        let geminiModel = storedProviders.gemini?.model || DEFAULT_SETTINGS.providers.gemini.model;
+        try {
+          const stored = (typeof result[SETTINGS_KEY] === 'object' && result[SETTINGS_KEY] !== null)
+            ? result[SETTINGS_KEY]
+            : {};
+          const storedProviders = (typeof stored.providers === 'object' && stored.providers !== null)
+            ? stored.providers
+            : {};
+          
+          const geminiKey = storedProviders.gemini?.apiKey ?? DEFAULT_SETTINGS.providers.gemini.apiKey;
+          let geminiModel = storedProviders.gemini?.model || DEFAULT_SETTINGS.providers.gemini.model;
 
-        // Auto-migrate legacy/deprecated models that cause 404s
-        const deprecatedModels = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite'];
-        if (!geminiModel || deprecatedModels.includes(geminiModel)) {
-          geminiModel = 'gemini-flash-lite-latest';
-        }
+          // Migrate obsolete draft model names to current stable production model
+          const obsoleteModels = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-3.7-flash'];
+          if (obsoleteModels.includes(geminiModel)) {
+            geminiModel = 'gemini-2.0-flash';
+          }
 
-        const merged: ExtensionSettings = {
-          ...DEFAULT_SETTINGS,
-          ...stored,
-          providers: {
-            ...DEFAULT_SETTINGS.providers,
-            ...storedProviders,
-            gemini: {
-              ...DEFAULT_SETTINGS.providers.gemini,
-              ...(storedProviders.gemini || {}),
-              apiKey: geminiKey,
-              model: geminiModel,
+          const merged: ExtensionSettings = {
+            ...DEFAULT_SETTINGS,
+            ...stored,
+            _version: 1,
+            providers: {
+              ...DEFAULT_SETTINGS.providers,
+              ...storedProviders,
+              gemini: {
+                ...DEFAULT_SETTINGS.providers.gemini,
+                ...(storedProviders.gemini || {}),
+                apiKey: geminiKey,
+                model: geminiModel,
+              },
             },
-          },
-        };
-        resolve(merged);
+          };
+          resolve(merged);
+        } catch (e) {
+          console.warn('Clearly: Recovered from corrupted settings storage', e);
+          resolve(DEFAULT_SETTINGS);
+        }
       }
     });
   });

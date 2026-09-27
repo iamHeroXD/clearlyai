@@ -36,7 +36,7 @@ export const FloatingPill: React.FC<FloatingPillProps> = ({
   const isSingleWord = wordCount <= 3;
 
   let primaryLabel = 'Explain';
-  let primaryMode: ExplanationMode = 'explain';
+  let primaryMode: ExplanationMode = 'simple';
 
   // Smart Intent Resolution
   if (isSingleWord) {

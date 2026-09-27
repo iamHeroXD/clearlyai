@@ -16,17 +16,19 @@ export async function processExplanationRequest(
     throw new Error('Clearly is currently paused. Enable it from the extension popup.');
   }
 
-  // Auto-detect mode if not explicitly chosen or if general 'explain' mode
+  // Auto-detect mode if not explicitly chosen or if general 'explain' / 'simple' mode
   let effectiveMode = request.mode;
-  if (effectiveMode === 'explain') {
+  if (effectiveMode === 'explain' || effectiveMode === 'simple') {
     if (settings.learningMode) {
-      effectiveMode = 'learning';
+      effectiveMode = 'eli5';
     } else if (settings.autoDetectCode && detectCode(request.text).isCode) {
       effectiveMode = 'code';
     } else if (settings.autoDetectMath && detectMath(request.text).isMath) {
       effectiveMode = 'math';
     } else if (request.text.trim().split(/\s+/).length <= 2 && !request.text.includes('.')) {
       effectiveMode = 'define';
+    } else {
+      effectiveMode = 'simple';
     }
   }
 

@@ -38,7 +38,7 @@ export const DownloadPage: React.FC = () => {
               Get Clearly for Browser & Desktop.
             </h1>
             <p className="text-[1.125rem] text-[var(--ink-soft)] mt-4 leading-[1.6]">
-              Instant text deconstruction anywhere you read or write. Choose the Chrome Extension for seamless web reading, or the Desktop App for universal screen control across all native applications.
+              Instant text deconstruction anywhere you read or write. Choose the Chrome Extension for seamless web reading, or Clearly Reader Studio for a focused, distraction-free document & reading workbench.
             </p>
           </div>
         </div>
@@ -121,7 +121,7 @@ export const DownloadPage: React.FC = () => {
 
                 <div className="flex items-center gap-2">
                   <h2 className="text-[1.375rem] font-semibold text-[var(--ink)] tracking-tight">
-                    Clearly Desktop OS
+                    Clearly Reader Studio
                   </h2>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                     Portable
@@ -129,21 +129,21 @@ export const DownloadPage: React.FC = () => {
                 </div>
                 
                 <p className="text-[0.9375rem] text-[var(--ink-soft)] mt-2 leading-[1.6]">
-                  Global screen area controller & text deconstructor. Works seamlessly across VS Code, Slack, PDF readers, Terminal, Word, and Notion.
+                  Distraction-free document & reading workbench. Paste or open text and documents with instant multi-lens AI deconstruction.
                 </p>
 
                 <ul className="my-6 space-y-2.5 text-xs text-[var(--ink-soft)] font-mono">
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                    <span>Global Spotlight HUD (⌥ Space / Ctrl+Shift+C)</span>
+                    <span>Distraction-free reading & deconstruction workbench</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                    <span>Screen area capture & live OCR deconstruct</span>
+                    <span>Instant clipboard paste & multi-lens analysis</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                    <span>Personal usage metrics & saved glossary vault</span>
+                    <span>Full canonical lens suite & local speech synthesis</span>
                   </li>
                 </ul>
               </div>
@@ -308,13 +308,13 @@ export const DownloadPage: React.FC = () => {
                   <div className="w-8 h-8 rounded-full bg-[#E1993B]/10 border border-[#E1993B]/30 flex items-center justify-center font-mono font-semibold text-xs text-[#E1993B] mb-4">
                     03
                   </div>
-                  <h3 className="text-[1.0625rem] font-semibold text-[var(--ink)] mb-2">Control Screen</h3>
+                  <h3 className="text-[1.0625rem] font-semibold text-[var(--ink)] mb-2">Start Reading</h3>
                   <p className="text-[0.875rem] text-[var(--ink-soft)] leading-[1.5] mb-5">
-                    Press <kbd className="font-mono text-xs bg-[var(--paper-raised)] px-1 py-0.5 rounded">⌥ Space</kbd> or <kbd className="font-mono text-xs bg-[var(--paper-raised)] px-1 py-0.5 rounded">Ctrl+Shift+C</kbd> to deconstruct text in any native app.
+                    Paste clipboard text, notes, or articles and deconstruct instantly across all 6 lenses.
                   </p>
                 </div>
                 <div className="p-3 rounded-[var(--radius-md)] bg-[#E1993B]/15 text-[#0C0C0A] dark:text-[#E1993B] font-mono text-xs flex items-center justify-between font-semibold border border-[#E1993B]/30">
-                  <span>✓ Screen Controller Live</span>
+                  <span>✓ Reader Studio Live</span>
                 </div>
               </div>
             </div>
@@ -338,7 +338,7 @@ export const DownloadPage: React.FC = () => {
             <div className="divide-y divide-[var(--line)] text-[0.9375rem]">
               {[
                 { platform: 'Google Chrome / Arc', type: 'Extension', support: 'window.ai Nano + Gemini Cloud', badge: 'Verified' },
-                { platform: 'Windows 10 / 11 (x64)', type: 'Desktop App', support: 'Screen OCR & Controller HUD', badge: 'Verified' },
+                { platform: 'Windows 10 / 11 (x64)', type: 'Desktop Studio', support: 'Portable Reader Studio Workbench', badge: 'Verified' },
                 { platform: 'Brave / Edge / Opera', type: 'Extension', support: 'Full Multi-Lens Support', badge: 'Verified' },
                 { platform: 'macOS / Linux', type: 'Web & Extension', support: 'Universal Chromium + Web HUD', badge: 'Verified' },
               ].map((row, i) => (

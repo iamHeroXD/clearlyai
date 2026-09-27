@@ -17,17 +17,15 @@ export class GeminiProvider implements AIProvider {
       throw new Error('Google Gemini API key is missing. Please set it in Extension Settings.');
     }
 
-    const requestedModel = config.model?.trim() || 'gemini-flash-lite-latest';
-    const baseUrl = config.endpoint || 'https://generativelanguage.googleapis.com/v1beta/models';
+    const requestedModel = config.model?.trim() || 'gemini-2.0-flash';
+    const baseUrl = config.endpoint?.trim() || 'https://generativelanguage.googleapis.com/v1beta/models';
 
-    // Robust fallback sequence tested and verified on Gemini API endpoints
+    // Verified production models in order of latency and capability
     const modelsToTry = [
       requestedModel,
-      'gemini-flash-lite-latest',
-      'gemini-3.5-flash-lite',
-      'gemini-3.7-flash',
-      'gemini-flash-latest',
-      'gemini-3.6-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-1.5-pro',
     ].filter((m, idx, arr) => arr.indexOf(m) === idx);
 
     const systemInstruction = customSystemPrompt || buildSystemPrompt(request, defaultLanguage);
@@ -45,7 +43,7 @@ export class GeminiProvider implements AIProvider {
       ],
       generationConfig: {
         temperature: config.temperature ?? 0.1,
-        maxOutputTokens: config.maxTokens ?? 300,
+        maxOutputTokens: config.maxTokens ?? 350,
         responseMimeType: 'application/json',
       },
     };
@@ -53,7 +51,8 @@ export class GeminiProvider implements AIProvider {
     let lastErrorMessage = '';
 
     for (const modelName of modelsToTry) {
-      const url = `${baseUrl}/${modelName}:generateContent?key=${encodeURIComponent(rawKey)}`;
+      // Secure endpoint: do NOT append API key to URL query string; pass via x-goog-api-key header
+      const url = `${baseUrl}/${encodeURIComponent(modelName)}:generateContent`;
       try {
         const response = await fetch(url, {
           method: 'POST',
