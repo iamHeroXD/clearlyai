@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clearly Extension - Test & Demo Playground</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      color: #1e293b;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 36px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    h1 { font-size: 24px; color: #0f172a; margin-bottom: 8px; }
+    h2 { font-size: 18px; color: #334155; margin-top: 28px; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+    p { margin-bottom: 14px; font-size: 15px; }
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-family: ui-monospace, Menlo, Monaco, Consolas, monospace;
+      font-size: 13.5px;
+      overflow-x: auto;
+    }
+    .math-box {
+      background: #f1f5f9;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-family: serif;
+      font-size: 17px;
+      text-align: center;
+      margin: 14px 0;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: #eff6ff;
+      color: #2563eb;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Clearly — Test Playground</h1>
+    <p style="color: #64748b; font-size: 14px;">Select any text on this page to test the Clearly floating action pill, explanations, simplifications, code detection, and math solving.</p>
+
+    <h2>1. Scientific Concepts</h2>
+    <span class="tag">Highlight to explain</span>
+    <p>
+      Photosynthesis is the photochemical biological process by which autotrophic organisms convert solar light energy into chemical energy stored within carbohydrate molecules like glucose. The light-dependent reactions take place within the thylakoid membranes of chloroplasts, whereas the Calvin cycle occurs in the stroma.
+    </p>
+
+    <h2>2. Complex / Academic Prose</h2>
+    <span class="tag">Highlight to simplify</span>
+    <p>
+      The comprehensive implementation of sustainable decarbonization infrastructure unequivocally necessitates substantial upfront capital expenditure, notwithstanding the longitudinal mitigation of macroeconomic environmental vulnerabilities.
+    </p>
+
+    <h2>3. Individual Vocabulary & Jargon</h2>
+    <span class="tag">Highlight single word to define</span>
+    <p>
+      The regulatory guidance issued by the commission was conspicuously <strong>ambiguous</strong>, leaving cross-border financial institutions uncertain regarding fiduciary compliance requirements.
+    </p>
+
+    <h2>4. Code & Programming Snippets</h2>
+    <span class="tag">Highlight code to analyze</span>
+    <pre><code>async function fetchUserData(userId) {
+  const cacheKey = `user:${userId}`;
+  const cached = await redis.get(cacheKey);
+  if (cached) return JSON.parse(cached);
+
+  const user = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+  if (!user.rows[0]) throw new Error('User not found');
+
+  await redis.set(cacheKey, JSON.stringify(user.rows[0]), 'EX', 3600);
+  return user.rows[0];
+}</code></pre>
+
+    <h2>5. Mathematical Formulas</h2>
+    <span class="tag">Highlight equation</span>
+    <div class="math-box">
+      e^{i\pi} + 1 = 0
+    </div>
+    <div class="math-box">
+      \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+    </div>
+
+    <h2>6. Contextual Ambiguity Test</h2>
+    <span class="tag">Highlight "it"</span>
+    <p>
+      The James Webb Space Telescope was successfully deployed into the second Lagrange point (L2). Because of its cryogenic infrared instruments, <strong>it</strong> can observe some of the earliest galaxies formed after the Big Bang.
+    </p>
+
+    <h2>7. ✍️ Inline Writing Assistant (Textarea & Editable Fields)</h2>
+    <span class="tag" style="background:#ecfdf5; color:#059669;">Highlight text inside to test 1-click in-place replace</span>
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+      <textarea style="width: 100%; height: 85px; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 14px; box-sizing: border-box;" placeholder="Type or select text here...">hey man i was thinking maybe we can talk about the budget tomorrow if you have free time?</textarea>
+      
+      <div contenteditable="true" style="width: 100%; min-height: 80px; padding: 12px; border-radius: 8px; border: 1.5px dashed #3b82f6; background: #f8fafc; font-size: 14px; box-sizing: border-box;">
+        Rich text field (e.g. Gmail / Notion): We are extremely exited to announce that our team has succesfully deployed the update without any major downtime issues.
+      </div>
+    </div>
+
+    <h2>8. ⚖️ Terms of Service & Legal Red Flag Scanner</h2>
+    <span class="tag" style="background:#fff1f2; color:#e11d48;">Highlight to scan for binding arbitration or privacy traps</span>
+    <div style="background: #fff8f8; border-left: 4px solid #f43f5e; padding: 14px; border-radius: 0 8px 8px 0; font-size: 13.5px; color: #4c0519; margin-top: 10px;">
+      YOU AGREE THAT ALL DISPUTES BETWEEN YOU AND THE COMPANY WILL BE RESOLVED BY BINDING ARBITRATION ON AN INDIVIDUAL BASIS AND YOU WAIVE ALL RIGHTS TO PARTICIPATE IN A CLASS ACTION LAWSUIT. THE COMPANY RETAINS AN UNCONDITIONAL, PERPETUAL, ROYALTY-FREE LICENSE TO MONETIZE AND SUBLICENSE ALL USER GENERATED CONTENT AND METADATA ACROSS THIRD-PARTY AD NETWORKS.
+    </div>
+  </div>
+</body>
+</html>

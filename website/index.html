@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clearly — Understand anything you highlight</title>
+  <meta name="description" content="Clearly is a Chrome extension that explains, rewrites, or defines whatever you've selected — right where you selected it." />
+  
+  <!-- Open Graph / Meta -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Clearly — Understand anything you highlight" />
+  <meta property="og:description" content="Instant explanations, in-place rewrites, and pronunciation right where you read." />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Theme Script (Instant Dark Mode without FOUC) -->
+  <script>
+    (function(){
+      try {
+        var saved = localStorage.getItem('clearly-theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = saved || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch(e){}
+    })();
+  </script>
+
+  <!-- Typography: Instrument Sans & IBM Plex Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Brand Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='2' y='2' width='20' height='20' rx='4' fill='%23141412'/><rect x='8' y='8' width='8' height='8' rx='2' fill='%23E1993B'/></svg>">
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,667 @@
+/* ==========================================================================
+   CLEARLY — Extension Shadow DOM Design System
+   Linear × Arc × Raycast Inspired Warm Minimalist Aesthetic
+   ========================================================================== */
+
+:host {
+  all: initial;
+  --font: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  
+  /* Light Theme — Warm Minimalist White & Orange */
+  --ink: #1C1917;
+  --ink-soft: #44403C;
+  --gray-600: #78716C;
+  --gray-500: #A8A29E;
+  --paper: rgba(255, 253, 250, 0.96);
+  --paper-raised: rgba(247, 244, 238, 0.85);
+  --line: rgba(234, 88, 12, 0.10);
+  --line-strong: rgba(234, 88, 12, 0.20);
+  --accent: #F97316;
+  --accent-ink: #FFFFFF;
+  --accent-soft: rgba(249, 115, 22, 0.12);
+  --accent-soft-strong: rgba(249, 115, 22, 0.25);
+  --glass-bg: rgba(254, 252, 248, 0.90);
+  --glass-border: rgba(249, 115, 22, 0.18);
+  --shadow-pill: 0 8px 28px rgba(249, 115, 22, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 20px 50px rgba(249, 115, 22, 0.09), 0 4px 16px rgba(0, 0, 0, 0.05);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.clearly-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 2147483647;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   BRAND MARK
+   ========================================================================== */
+.clearly-brand-mark {
+  width: 7px;
+  height: 7px;
+  background-color: var(--accent);
+  border-radius: 1.5px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   FLOATING ACTION PILL
+   ========================================================================== */
+.clearly-pill {
+  position: fixed;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  max-width: calc(100vw - 20px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-pill);
+  border-radius: var(--radius-pill);
+  padding: 3px 5px 3px 7px;
+  user-select: none;
+  transition: transform 0.14s var(--ease), opacity 0.14s ease, box-shadow 0.14s ease;
+  transform-origin: center bottom;
+  animation: clearlyPillIn 0.16s var(--ease);
+  color: var(--ink);
+  z-index: 2147483647;
+}
+
+.clearly-pill.dark {
+  --ink: #FAF9F5;
+  --ink-soft: #D6D3C8;
+  --gray-600: #A8A59B;
+  --gray-500: #888478;
+  --paper: rgba(18, 18, 16, 0.94);
+  --paper-raised: rgba(28, 28, 24, 0.75);
+  --line: rgba(255, 255, 255, 0.10);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --accent: #E1993B;
+  --accent-ink: #0C0C0A;
+  --accent-soft: rgba(225, 153, 59, 0.18);
+  --glass-bg: rgba(16, 16, 14, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --shadow-pill: 0 10px 30px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.clearly-pill:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: var(--shadow-card);
+}
+
+.clearly-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  outline: none;
+  transition: opacity 0.12s ease;
+  white-space: nowrap;
+}
+
+.clearly-pill-btn:hover {
+  opacity: 0.85;
+}
+
+.clearly-pill-brand-text {
+  letter-spacing: -0.01em;
+}
+
+.clearly-pill-badge {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+}
+
+.clearly-pill-divider {
+  width: 1px;
+  height: 12px;
+  background: var(--line);
+  margin: 0 1px;
+}
+
+.clearly-pill-more-btn {
+  padding: 3px 5px;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  border: none;
+  color: var(--gray-600);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.12s ease;
+}
+
+.clearly-pill-more-btn:hover {
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   DROPDOWN MENU
+   ========================================================================== */
+.clearly-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  min-width: 170px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  z-index: 2147483647;
+  animation: clearlyMenuIn 0.14s var(--ease);
+}
+
+.clearly-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.clearly-menu-item:hover {
+  background: var(--paper-raised);
+}
+
+/* ==========================================================================
+   COMPACT EXPLANATION CARD
+   ========================================================================== */
+.clearly-card {
+  position: fixed;
+  pointer-events: auto;
+  width: min(340px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  display: flex;
+  flex-direction: column;
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  user-select: text;
+  transition: transform 0.16s var(--ease), opacity 0.16s ease;
+  animation: clearlyCardIn 0.18s var(--ease);
+  color: var(--ink);
+  z-index: 2147483647;
+}
+
+.clearly-card.dark {
+  --ink: #FAF9F5;
+  --ink-soft: #D6D3C8;
+  --gray-600: #A8A59B;
+  --gray-500: #888478;
+  --paper: rgba(18, 18, 16, 0.94);
+  --paper-raised: rgba(28, 28, 24, 0.75);
+  --line: rgba(255, 255, 255, 0.10);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --accent: #E1993B;
+  --accent-ink: #0C0C0A;
+  --accent-soft: rgba(225, 153, 59, 0.18);
+  --glass-bg: rgba(16, 16, 14, 0.86);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --shadow-card: 0 30px 70px rgba(0, 0, 0, 0.8), 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Header */
+.clearly-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 8px 12px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.clearly-header-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.clearly-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.clearly-icon-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--gray-600);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+
+.clearly-icon-btn:hover {
+  background: var(--paper-raised);
+  color: var(--ink);
+}
+
+.clearly-icon-btn.starred {
+  color: var(--accent);
+}
+
+.clearly-icon-btn.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Lenses Bar */
+.clearly-lenses-bar {
+  display: flex;
+  gap: 2px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-raised);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.clearly-lenses-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.clearly-lens-tab {
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  border: none;
+  color: var(--gray-600);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.clearly-lens-tab:hover {
+  color: var(--ink);
+}
+
+.clearly-lens-tab.active {
+  background: var(--paper);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* Privacy Notice Box */
+.clearly-privacy-box {
+  margin: 8px 12px 0 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--paper-raised);
+  border: 1px dashed var(--line-strong);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+/* Body Content */
+.clearly-card-body {
+  padding: 12px 14px;
+  overflow-y: auto;
+  max-height: 380px;
+}
+
+.clearly-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.clearly-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.clearly-section-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-600);
+  margin-bottom: 3px;
+  font-family: var(--font-mono);
+}
+
+.clearly-text-body {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.clearly-polished-text {
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Replace button */
+.clearly-replace-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: opacity 0.14s ease, transform 0.1s ease;
+}
+
+.clearly-replace-btn:hover {
+  opacity: 0.88;
+}
+
+.clearly-replace-btn:active {
+  transform: scale(0.97);
+}
+
+/* Word Definition */
+.clearly-word-header {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.clearly-word-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.clearly-word-pos {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--gray-600);
+}
+
+.clearly-word-ipa {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.clearly-example-box {
+  margin-top: 6px;
+  padding: 6px 9px;
+  border-radius: var(--radius-sm);
+  background: var(--paper-raised);
+  border-left: 2px solid var(--accent);
+  font-size: 12px;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+
+.clearly-why-box {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+
+.clearly-synonyms {
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--gray-600);
+}
+
+/* Bullets */
+.clearly-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: 0;
+}
+
+.clearly-bullets li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.clearly-bullets li::before {
+  content: "•";
+  position: absolute;
+  left: 2px;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* Legal Box */
+.clearly-legal-box {
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  background: rgba(225, 153, 59, 0.08);
+  border: 1px solid var(--accent-soft-strong);
+}
+
+.clearly-legal-badge {
+  font-size: 10.5px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+/* Loading Shimmer */
+.clearly-loading-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.clearly-loading-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.clearly-shimmer-line {
+  height: 10px;
+  border-radius: 4px;
+  background: var(--line);
+  animation: clearlyPulse 1.2s ease-in-out infinite;
+}
+
+.clearly-shimmer-line.short {
+  width: 65%;
+}
+
+/* Footer & Input */
+.clearly-card-footer {
+  padding: 8px 12px 10px 12px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-raised);
+}
+
+.clearly-input-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  padding: 2px 4px 2px 10px;
+}
+
+.clearly-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 12px;
+  outline: none;
+}
+
+.clearly-input::placeholder {
+  color: var(--gray-500);
+}
+
+.clearly-submit-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.1s ease;
+}
+
+.clearly-submit-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Error Box */
+.clearly-error-box {
+  padding: 10px;
+  border-radius: var(--radius-md);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.clearly-error-headline {
+  font-size: 12px;
+  font-weight: 600;
+  color: #dc2626;
+  margin-bottom: 2px;
+}
+
+.clearly-error-detail {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.clearly-action-btn {
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Animations */
+@keyframes clearlyPillIn {
+  0% { opacity: 0; transform: translateY(4px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes clearlyCardIn {
+  0% { opacity: 0; transform: translateY(6px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes clearlyMenuIn {
+  0% { opacity: 0; transform: translateY(-4px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes clearlyPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}

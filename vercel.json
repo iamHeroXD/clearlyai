@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build:website",
+  "outputDirectory": "dist-website",
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
