@@ -68,7 +68,7 @@ export interface DesktopSettings {
   compactMode: boolean;
   reduceMotion: boolean;
 
-  activeProvider: 'nano' | 'gemini' | 'claude' | 'ollama' | 'openai';
+  activeProvider: 'gemini' | 'claude' | 'ollama' | 'openai' | 'offline';
   geminiApiKey?: string;
   claudeApiKey?: string;
   openaiApiKey?: string;
@@ -90,7 +90,7 @@ export const DEFAULT_SETTINGS: DesktopSettings = {
   hotkeyScreenSelect: 'Ctrl+Shift+C',
   hotkeyClipboard: '⌥ V',
 
-  theme: 'dark',
+  theme: 'light',
   glassBlurLevel: 24,
   compactMode: false,
   reduceMotion: false,

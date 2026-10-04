@@ -17,10 +17,10 @@
   --paper-raised: rgba(247, 244, 238, 0.85);
   --line: rgba(234, 88, 12, 0.10);
   --line-strong: rgba(234, 88, 12, 0.20);
-  --accent: #F97316;
-  --accent-ink: #FFFFFF;
-  --accent-soft: rgba(249, 115, 22, 0.12);
-  --accent-soft-strong: rgba(249, 115, 22, 0.25);
+  --accent: #E1993B;
+  --accent-ink: #141412;
+  --accent-soft: rgba(225, 153, 59, 0.16);
+  --accent-soft-strong: rgba(225, 153, 59, 0.34);
   --glass-bg: rgba(254, 252, 248, 0.90);
   --glass-border: rgba(249, 115, 22, 0.18);
   --shadow-pill: 0 8px 28px rgba(249, 115, 22, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);

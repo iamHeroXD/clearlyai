@@ -135,3 +135,41 @@ export function formatProviderError(provider: string, rawError: string): string 
 
   return `${provider.toUpperCase()} couldn't process this request: ${rawError}`;
 }
+
+/**
+ * Migrates legacy, deprecated, or retired model IDs to current production recommendations
+ */
+export function migrateModelId(provider: string, currentModel: string | undefined): string {
+  if (!currentModel) {
+    if (provider in AI_MODEL_CONFIG) {
+      return (AI_MODEL_CONFIG as any)[provider].defaultModel;
+    }
+    return '';
+  }
+
+  const legacyMap: Record<string, string> = {
+    // Google Gemini
+    'gemini-2.0-flash': 'gemini-1.5-flash',
+    'gemini-2.0-flash-exp': 'gemini-1.5-flash',
+    'gemini-1.5-flash-latest': 'gemini-1.5-flash',
+    'gemini-pro': 'gemini-1.5-flash',
+    'gemini-1.0-pro': 'gemini-1.5-flash',
+    // OpenAI
+    'gpt-3.5-turbo': 'gpt-4o-mini',
+    'gpt-3.5-turbo-0125': 'gpt-4o-mini',
+    'gpt-4': 'gpt-4o',
+    'text-davinci-003': 'gpt-4o-mini',
+    // Anthropic
+    'claude-2': 'claude-3-5-haiku-20241022',
+    'claude-2.1': 'claude-3-5-haiku-20241022',
+    'claude-3-haiku-20240307': 'claude-3-5-haiku-20241022',
+    'claude-instant-1.2': 'claude-3-5-haiku-20241022',
+  };
+
+  if (legacyMap[currentModel]) {
+    return legacyMap[currentModel];
+  }
+
+  return currentModel;
+}
+

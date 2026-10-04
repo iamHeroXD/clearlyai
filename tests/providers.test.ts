@@ -100,6 +100,30 @@ describe('AI Providers & Parser', () => {
     expect(netErr).toContain('Network connection to GEMINI failed');
   });
 
+  it('migrateModelId should correctly migrate legacy models across providers', async () => {
+    const { migrateModelId } = await import('../src/config/models');
+
+    // Gemini
+    expect(migrateModelId('gemini', 'gemini-2.0-flash')).toBe('gemini-1.5-flash');
+    expect(migrateModelId('gemini', 'gemini-2.0-flash-exp')).toBe('gemini-1.5-flash');
+    expect(migrateModelId('gemini', 'gemini-pro')).toBe('gemini-1.5-flash');
+    expect(migrateModelId('gemini', 'gemini-1.5-pro')).toBe('gemini-1.5-pro');
+
+    // OpenAI
+    expect(migrateModelId('openai', 'gpt-3.5-turbo')).toBe('gpt-4o-mini');
+    expect(migrateModelId('openai', 'gpt-4')).toBe('gpt-4o');
+    expect(migrateModelId('openai', 'gpt-4o-mini')).toBe('gpt-4o-mini');
+
+    // Anthropic
+    expect(migrateModelId('anthropic', 'claude-2')).toBe('claude-3-5-haiku-20241022');
+    expect(migrateModelId('anthropic', 'claude-3-haiku-20240307')).toBe('claude-3-5-haiku-20241022');
+    expect(migrateModelId('anthropic', 'claude-3-5-sonnet-20241022')).toBe('claude-3-5-sonnet-20241022');
+
+    // Undefined fallback
+    expect(migrateModelId('gemini', undefined)).toBe('gemini-1.5-flash');
+    expect(migrateModelId('openai', undefined)).toBe('gpt-4o-mini');
+  });
+
   describe('GeminiNanoProvider', () => {
     it('isAvailable returns false when window.ai is missing', async () => {
       const { GeminiNanoProvider } = await import('../src/providers/nano');

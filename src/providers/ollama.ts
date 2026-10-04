@@ -1,6 +1,7 @@
 import { AIProvider, parseJsonOutput } from './types';
 import { ExplanationRequest, StructuredExplanation, ProviderConfig } from '../types';
 import { buildSystemPrompt, buildUserPrompt } from '../utils/systemPrompt';
+import { formatProviderError } from '../config/models';
 
 export class OllamaProvider implements AIProvider {
   id = 'ollama';
@@ -28,27 +29,42 @@ export class OllamaProvider implements AIProvider {
       },
     };
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    }).catch(() => {
-      throw new Error('Unable to connect to local Ollama. Ensure Ollama is running on localhost:11434 with OLLAMA_ORIGINS="*"');
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-    if (!response.ok) {
-      throw new Error(`Ollama error (${response.status}): ${response.statusText}`);
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      }).catch((fetchErr) => {
+        if (fetchErr.name === 'AbortError') throw fetchErr;
+        throw new Error('Unable to connect to local Ollama. Ensure Ollama is running on localhost:11434 with OLLAMA_ORIGINS="*"');
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(formatProviderError('Ollama', `HTTP ${response.status}: ${response.statusText}`));
+      }
+
+      const data = await response.json();
+      const content = data?.response;
+
+      if (!content) {
+        throw new Error('Empty response from Ollama.');
+      }
+
+      return parseJsonOutput(content, request.mode);
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        throw new Error(formatProviderError('Ollama', 'Request timed out after 15 seconds.'));
+      }
+      throw err;
     }
-
-    const data = await response.json();
-    const content = data?.response;
-
-    if (!content) {
-      throw new Error('Empty response from Ollama.');
-    }
-
-    return parseJsonOutput(content, request.mode);
   }
 }

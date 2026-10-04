@@ -1,6 +1,7 @@
 import { AIProvider, parseJsonOutput } from './types';
 import { ExplanationRequest, StructuredExplanation, ProviderConfig } from '../types';
 import { buildSystemPrompt, buildUserPrompt } from '../utils/systemPrompt';
+import { formatProviderError } from '../config/models';
 
 export class OpenAIProvider implements AIProvider {
   id = 'openai';
@@ -33,33 +34,42 @@ export class OpenAIProvider implements AIProvider {
       max_tokens: config.maxTokens ?? 1024,
     };
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${config.apiKey.trim()}`,
-      },
-      body: JSON.stringify(payload),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      const message = err?.error?.message || `OpenAI API error: ${response.status}`;
-      if (response.status === 401) {
-        throw new Error('Invalid OpenAI API Key. Check settings.');
-      } else if (response.status === 429) {
-        throw new Error('OpenAI rate limit or quota exceeded. Please try again soon.');
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${config.apiKey.trim()}`,
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        const rawMsg = err?.error?.message || `HTTP ${response.status}`;
+        throw new Error(formatProviderError('OpenAI', rawMsg));
       }
-      throw new Error(message);
+
+      const data = await response.json();
+      const content = data?.choices?.[0]?.message?.content;
+
+      if (!content) {
+        throw new Error('Empty response received from OpenAI.');
+      }
+
+      return parseJsonOutput(content, request.mode);
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        throw new Error(formatProviderError('OpenAI', 'Request timed out after 15 seconds.'));
+      }
+      throw err;
     }
-
-    const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
-
-    if (!content) {
-      throw new Error('Empty response received from OpenAI.');
-    }
-
-    return parseJsonOutput(content, request.mode);
   }
 }

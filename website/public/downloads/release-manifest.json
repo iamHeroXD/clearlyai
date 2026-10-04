@@ -3,13 +3,13 @@
   "artifacts": [
     {
       "filename": "clearly-extension-v1.0.0.zip",
-      "sizeBytes": 676129,
-      "sha256": "fdb7ab0d780f25fd0493df42995d56f88594434dbdf34edcc9272f23ded2c8b9"
+      "sizeBytes": 676669,
+      "sha256": "2d4575716b7fb5a97ee6069c8172806ae6204150c6b8c431ce7282b77de59f78"
     },
     {
       "filename": "clearly-desktop-v1.0.0-windows.zip",
-      "sizeBytes": 78946,
-      "sha256": "3c9160aeec46fdaf263b20820a08d702c78fc324570f88bd7b55e58f7fcb4de4"
+      "sizeBytes": 74237,
+      "sha256": "1a0bd0946717e2061cb0b1647c781f5671a710057dac97b48e215ebd5f15bd57"
     }
   ]
 }

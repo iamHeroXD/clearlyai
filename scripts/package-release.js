@@ -270,6 +270,20 @@ try {
     JSON.stringify(manifest, null, 2) + '\n',
     'utf8'
   );
+
+  const distWebsiteDownloads = path.resolve(rootDir, 'dist-website/downloads');
+  if (fs.existsSync(path.resolve(rootDir, 'dist-website'))) {
+    if (!fs.existsSync(distWebsiteDownloads)) {
+      fs.mkdirSync(distWebsiteDownloads, { recursive: true });
+    }
+    fs.copyFileSync(extensionZipPath, path.resolve(distWebsiteDownloads, 'clearly-extension-v1.0.0.zip'));
+    fs.copyFileSync(desktopZipPath, path.resolve(distWebsiteDownloads, 'clearly-desktop-v1.0.0-windows.zip'));
+    fs.copyFileSync(
+      path.resolve(websitePublicDownloads, 'release-manifest.json'),
+      path.resolve(distWebsiteDownloads, 'release-manifest.json')
+    );
+  }
+
   console.log('✓ Successfully wrote deterministic release-manifest.json with verified checksums!');
 } catch (e) {
   console.error('Packaging error:', e);
