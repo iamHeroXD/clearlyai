@@ -74,20 +74,72 @@ describe('AI Providers & Parser', () => {
     expect(legalRes.legalFlags?.riskLevel).toBe('high');
   });
 
-  it('AI_MODEL_CONFIG should strictly use official gemini-2.5-flash as default', async () => {
-    const { AI_MODEL_CONFIG } = await import('../src/config/models');
-    expect(AI_MODEL_CONFIG.gemini.defaultModel).toBe('gemini-2.5-flash');
+  it('AI_MODEL_CONFIG should strictly use official gemini-3.8-flash as default', async () => {
+    const { AI_MODEL_CONFIG, getActiveModels } = await import('../src/config/models');
+    expect(AI_MODEL_CONFIG.gemini.defaultModel).toBe('gemini-3.8-flash');
     expect(AI_MODEL_CONFIG.gemini.authHeader).toBe('x-goog-api-key');
     const modelIds = AI_MODEL_CONFIG.gemini.models.map((m: any) => m.id);
-    expect(modelIds).toContain('gemini-2.5-flash');
-    expect(modelIds).toContain('gemini-2.5-pro');
-    expect(modelIds).toContain('gemini-2.5-flash-lite');
+    expect(modelIds).toContain('gemini-3.8-flash');
+    expect(modelIds).toContain('gemini-3.5-flash-lite');
+    expect(modelIds).toContain('gemini-3.1-pro-preview');
+
+    // Only active models are returned by getActiveModels
+    const activeGemini = getActiveModels('gemini');
+    expect(activeGemini.every((m) => m.status === 'active')).toBe(true);
+    expect(activeGemini.some((m) => m.id === 'gemini-3.8-flash')).toBe(true);
+    expect(activeGemini.some((m) => m.id === 'gemini-1.5-flash')).toBe(false);
+    expect(activeGemini.some((m) => m.id === 'gemini-2.5-flash')).toBe(false);
 
     // Anthropic official default
     expect(AI_MODEL_CONFIG.anthropic.defaultModel).toBe('claude-haiku-4-5-20251001');
 
     // OpenAI official default
     expect(AI_MODEL_CONFIG.openai.defaultModel).toBe('gpt-4o-mini');
+  });
+
+  it('getDeterministicFallbackModels must never include retired or legacy models', async () => {
+    const { getDeterministicFallbackModels } = await import('../src/config/models');
+
+    const fallbacks = getDeterministicFallbackModels('gemini', 'gemini-3.8-flash');
+    expect(fallbacks).toContain('gemini-3.5-flash-lite');
+    expect(fallbacks).toContain('gemini-3.1-pro-preview');
+
+    // CRITICAL LAUNCH GATE: NEVER include retired or legacy models in fallback
+    expect(fallbacks).not.toContain('gemini-3.8-flash'); // must not contain primary model
+    expect(fallbacks).not.toContain('gemini-1.5-flash');
+    expect(fallbacks).not.toContain('gemini-1.5-pro');
+    expect(fallbacks).not.toContain('gemini-2.0-flash');
+    expect(fallbacks).not.toContain('gemini-2.5-flash');
+    expect(fallbacks).not.toContain('gemini-2.5-pro');
+  });
+
+  it('validateAndResolveModel should validate active models and safely migrate retired/legacy/corrupt models', async () => {
+    const { validateAndResolveModel } = await import('../src/config/models');
+
+    // Active model passes through untouched
+    const activeRes = validateAndResolveModel('gemini', 'gemini-3.8-flash');
+    expect(activeRes.resolvedModel).toBe('gemini-3.8-flash');
+    expect(activeRes.wasMigrated).toBe(false);
+
+    // Retired model is migrated
+    const retiredRes = validateAndResolveModel('gemini', 'gemini-1.5-flash');
+    expect(retiredRes.resolvedModel).toBe('gemini-3.8-flash');
+    expect(retiredRes.wasMigrated).toBe(true);
+
+    // Legacy model is migrated to avoid restricted tier
+    const legacyRes = validateAndResolveModel('gemini', 'gemini-2.5-flash');
+    expect(legacyRes.resolvedModel).toBe('gemini-3.8-flash');
+    expect(legacyRes.wasMigrated).toBe(true);
+
+    // Unknown or corrupted model is migrated to default
+    const corruptRes = validateAndResolveModel('gemini', 'random-corrupted-model-id-999');
+    expect(corruptRes.resolvedModel).toBe('gemini-3.8-flash');
+    expect(corruptRes.wasMigrated).toBe(true);
+
+    // Undefined / empty string safely migrates
+    const emptyRes = validateAndResolveModel('gemini', undefined);
+    expect(emptyRes.resolvedModel).toBe('gemini-3.8-flash');
+    expect(emptyRes.wasMigrated).toBe(true);
   });
 
   it('formatProviderError should format auth, quota, timeout, and network errors gracefully', async () => {
@@ -112,14 +164,14 @@ describe('AI Providers & Parser', () => {
   it('migrateModelId should correctly migrate legacy models across providers and handle edge cases', async () => {
     const { migrateModelId } = await import('../src/config/models');
 
-    // Gemini legacy migrations -> gemini-2.5-flash
-    expect(migrateModelId('gemini', 'gemini-1.5-flash')).toBe('gemini-2.5-flash');
-    expect(migrateModelId('gemini', 'gemini-1.5-pro')).toBe('gemini-2.5-pro');
-    expect(migrateModelId('gemini', 'gemini-2.0-flash')).toBe('gemini-2.5-flash');
-    expect(migrateModelId('gemini', 'gemini-2.0-flash-exp')).toBe('gemini-2.5-flash');
-    expect(migrateModelId('gemini', 'gemini-pro')).toBe('gemini-2.5-flash');
-    expect(migrateModelId('gemini', 'gemini-2.5-flash')).toBe('gemini-2.5-flash');
-    expect(migrateModelId('gemini', 'gemini-2.5-pro')).toBe('gemini-2.5-pro');
+    // Gemini legacy migrations -> gemini-3.8-flash (or 3.1 pro)
+    expect(migrateModelId('gemini', 'gemini-1.5-flash')).toBe('gemini-3.8-flash');
+    expect(migrateModelId('gemini', 'gemini-1.5-pro')).toBe('gemini-3.1-pro-preview');
+    expect(migrateModelId('gemini', 'gemini-2.0-flash')).toBe('gemini-3.8-flash');
+    expect(migrateModelId('gemini', 'gemini-2.0-flash-exp')).toBe('gemini-3.8-flash');
+    expect(migrateModelId('gemini', 'gemini-pro')).toBe('gemini-3.8-flash');
+    expect(migrateModelId('gemini', 'gemini-2.5-flash')).toBe('gemini-3.8-flash');
+    expect(migrateModelId('gemini', 'gemini-3.8-flash')).toBe('gemini-3.8-flash');
 
     // OpenAI legacy migrations -> gpt-4o-mini / gpt-4o
     expect(migrateModelId('openai', 'gpt-3.5-turbo')).toBe('gpt-4o-mini');
@@ -127,18 +179,20 @@ describe('AI Providers & Parser', () => {
     expect(migrateModelId('openai', 'gpt-4o-mini')).toBe('gpt-4o-mini');
     expect(migrateModelId('openai', 'gpt-4o')).toBe('gpt-4o');
 
-    // Anthropic legacy migrations -> claude-haiku-4-5-20251001 / claude-sonnet-5.5
+    // Anthropic legacy migrations -> claude-haiku-4-5-20251001 / claude-sonnet-5-5
     expect(migrateModelId('anthropic', 'claude-3-5-haiku-20241022')).toBe('claude-haiku-4-5-20251001');
-    expect(migrateModelId('anthropic', 'claude-3-5-sonnet-20241022')).toBe('claude-sonnet-5.5');
+    expect(migrateModelId('anthropic', 'claude-3-5-sonnet-20241022')).toBe('claude-sonnet-5-5');
+    expect(migrateModelId('anthropic', 'claude-sonnet-5.5')).toBe('claude-sonnet-5-5');
+    expect(migrateModelId('anthropic', 'claude-sonnet-5-5')).toBe('claude-sonnet-5-5');
     expect(migrateModelId('anthropic', 'claude-2')).toBe('claude-haiku-4-5-20251001');
     expect(migrateModelId('anthropic', 'claude-3-haiku-20240307')).toBe('claude-haiku-4-5-20251001');
     expect(migrateModelId('anthropic', 'claude-haiku-4-5-20251001')).toBe('claude-haiku-4-5-20251001');
 
     // Edge Cases: missing model, empty string, whitespace, unknown model, corrupted value
-    expect(migrateModelId('gemini', undefined)).toBe('gemini-2.5-flash');
-    expect(migrateModelId('gemini', '')).toBe('gemini-2.5-flash');
-    expect(migrateModelId('gemini', '   ')).toBe('gemini-2.5-flash');
-    expect(migrateModelId('gemini', 'unknown-random-model-id')).toBe('gemini-2.5-flash');
+    expect(migrateModelId('gemini', undefined)).toBe('gemini-3.8-flash');
+    expect(migrateModelId('gemini', '')).toBe('gemini-3.8-flash');
+    expect(migrateModelId('gemini', '   ')).toBe('gemini-3.8-flash');
+    expect(migrateModelId('gemini', 'unknown-random-model-id')).toBe('gemini-3.8-flash');
     expect(migrateModelId('openai', undefined)).toBe('gpt-4o-mini');
     expect(migrateModelId('anthropic', undefined)).toBe('claude-haiku-4-5-20251001');
     expect(migrateModelId('ollama', undefined)).toBe('llama3.2');

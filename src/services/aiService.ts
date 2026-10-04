@@ -1,10 +1,11 @@
-import { ExplanationRequest, StructuredExplanation, ExtensionSettings } from '../types';
+import { ExplanationRequest, StructuredExplanation, ExtensionSettings, ProviderConfig } from '../types';
 import { getStoredSettings } from './storage';
 import { getAIProvider } from '../providers';
 import { cacheService, generateCacheKey } from './cache';
 import { addHistoryItem } from './history';
 import { detectCode } from '../utils/codeDetector';
 import { detectMath } from '../utils/mathDetector';
+import { validateAndResolveModel } from '../config/models';
 
 export async function processExplanationRequest(
   request: ExplanationRequest,
@@ -41,10 +42,17 @@ export async function processExplanationRequest(
   const providerConfig = settings.providers[activeProviderKey] || {};
   const providerInstance = getAIProvider(activeProviderKey);
 
+  // Pre-request model validation & resolution
+  const { resolvedModel } = validateAndResolveModel(activeProviderKey, providerConfig.model);
+  const activeProviderConfig: ProviderConfig = {
+    ...providerConfig,
+    model: resolvedModel,
+  };
+
   // Check cache first (only for non-followup requests)
   let cacheKey: string | null = null;
   if (settings.cacheEnabled && !enrichedRequest.followUpQuery) {
-    cacheKey = generateCacheKey(enrichedRequest, activeProviderKey, providerConfig.model);
+    cacheKey = generateCacheKey(enrichedRequest, activeProviderKey, resolvedModel);
     const cachedResponse = cacheService.get(cacheKey);
     if (cachedResponse) {
       return cachedResponse;
@@ -54,13 +62,13 @@ export async function processExplanationRequest(
   try {
     const response = await providerInstance.explain(
       enrichedRequest,
-      providerConfig,
+      activeProviderConfig,
       settings.defaultLanguage,
       settings.customSystemPrompt
     );
 
     response.provider = activeProviderKey;
-    response.model = providerConfig.model || '';
+    response.model = resolvedModel;
 
     // Cache the response
     if (cacheKey && settings.cacheEnabled) {

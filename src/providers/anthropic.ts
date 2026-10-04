@@ -1,7 +1,7 @@
 import { AIProvider, parseJsonOutput } from './types';
 import { ExplanationRequest, StructuredExplanation, ProviderConfig } from '../types';
 import { buildSystemPrompt, buildUserPrompt } from '../utils/systemPrompt';
-import { formatProviderError, AI_MODEL_CONFIG } from '../config/models';
+import { formatProviderError, AI_MODEL_CONFIG, validateAndResolveModel } from '../config/models';
 
 export class AnthropicProvider implements AIProvider {
   id = 'anthropic';
@@ -17,14 +17,17 @@ export class AnthropicProvider implements AIProvider {
       throw new Error('Anthropic API key is missing. Please set it in Extension Settings.');
     }
 
+    // Validate and resolve model before dispatching request
+    const { resolvedModel } = validateAndResolveModel('anthropic', config.model);
+    
+    // Security check: ensure endpoint defaults to official Anthropic API to prevent leaking keys
     const endpoint = config.endpoint || AI_MODEL_CONFIG.anthropic.endpoint;
-    const model = config.model || AI_MODEL_CONFIG.anthropic.defaultModel;
 
     const systemPrompt = customSystemPrompt || buildSystemPrompt(request, defaultLanguage);
     const userPrompt = buildUserPrompt(request);
 
     const payload = {
-      model,
+      model: resolvedModel,
       max_tokens: config.maxTokens ?? 1024,
       system: systemPrompt,
       messages: [
@@ -37,6 +40,13 @@ export class AnthropicProvider implements AIProvider {
     const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
+      /**
+       * Architectural Security Note:
+       * 'anthropic-dangerous-direct-browser-access: true' is mandated by Anthropic's CORS
+       * API gateway for requests initiated directly from browser runtime contexts.
+       * Clearly is fully client-side BYOK with zero intermediate servers to protect
+       * user privacy. Without this header, Anthropic rejects client-side fetches.
+       */
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {

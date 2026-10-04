@@ -1,7 +1,7 @@
 import { AIProvider, parseJsonOutput } from './types';
 import { ExplanationRequest, StructuredExplanation, ProviderConfig } from '../types';
 import { buildSystemPrompt, buildUserPrompt } from '../utils/systemPrompt';
-import { formatProviderError, AI_MODEL_CONFIG } from '../config/models';
+import { formatProviderError, AI_MODEL_CONFIG, validateAndResolveModel } from '../config/models';
 
 export class OllamaProvider implements AIProvider {
   id = 'ollama';
@@ -14,13 +14,13 @@ export class OllamaProvider implements AIProvider {
     customSystemPrompt?: string
   ): Promise<StructuredExplanation> {
     const endpoint = config.endpoint || AI_MODEL_CONFIG.ollama.endpoint;
-    const model = config.model || AI_MODEL_CONFIG.ollama.defaultModel;
+    const { resolvedModel } = validateAndResolveModel('ollama', config.model);
 
     const systemPrompt = customSystemPrompt || buildSystemPrompt(request, defaultLanguage);
     const userPrompt = buildUserPrompt(request);
 
     const payload = {
-      model,
+      model: resolvedModel,
       prompt: `${systemPrompt}\n\n${userPrompt}`,
       stream: false,
       format: 'json',

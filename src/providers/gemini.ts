@@ -1,7 +1,12 @@
 import { AIProvider, parseJsonOutput } from './types';
 import { ExplanationRequest, StructuredExplanation, ProviderConfig } from '../types';
 import { buildSystemPrompt, buildUserPrompt } from '../utils/systemPrompt';
-import { AI_MODEL_CONFIG, formatProviderError } from '../config/models';
+import {
+  AI_MODEL_CONFIG,
+  formatProviderError,
+  validateAndResolveModel,
+  getDeterministicFallbackModels,
+} from '../config/models';
 
 export class GeminiProvider implements AIProvider {
   id = 'gemini';
@@ -18,15 +23,13 @@ export class GeminiProvider implements AIProvider {
       throw new Error("Google Gemini API key is missing. Please configure your key in Extension Settings.");
     }
 
-    const requestedModel = config.model?.trim() || AI_MODEL_CONFIG.gemini.defaultModel;
+    // 1. Validate & resolve requested model before dispatching any request
+    const { resolvedModel } = validateAndResolveModel('gemini', config.model);
     const baseUrl = config.endpoint?.trim() || AI_MODEL_CONFIG.gemini.endpoint;
 
-    // Production-supported models from AI_MODEL_CONFIG
-    const productionModels = AI_MODEL_CONFIG.gemini.models.map((m) => m.id);
-    const modelsToTry = [
-      requestedModel,
-      ...productionModels,
-    ].filter((m, idx, arr) => arr.indexOf(m) === idx);
+    // 2. Derive deterministic active-only fallback candidates (ARCHITECTURAL RULE: never include retired or legacy models)
+    const fallbackCandidates = getDeterministicFallbackModels('gemini', resolvedModel, 'fast-reading');
+    const modelsToTry = [resolvedModel, ...fallbackCandidates];
 
     const systemInstruction = customSystemPrompt || buildSystemPrompt(request, defaultLanguage);
     const userPrompt = buildUserPrompt(request);
@@ -82,7 +85,7 @@ export class GeminiProvider implements AIProvider {
           const rawMsg = errorData?.error?.message || `HTTP ${response.status}`;
           lastErrorMessage = rawMsg;
 
-          // If API key is rejected, fail fast with actionable guidance
+          // If API key is rejected, fail fast with actionable guidance without uselessly trying fallback models
           if (response.status === 400 && rawMsg.toLowerCase().includes('api_key_invalid')) {
             throw new Error(formatProviderError('Gemini', 'API key is invalid. Please verify your key at aistudio.google.com.'));
           }
@@ -95,7 +98,7 @@ export class GeminiProvider implements AIProvider {
             throw new Error(formatProviderError('Gemini', 'Rate limit exceeded. Please wait a few moments before trying again.'));
           }
 
-          // For 404 (model not found) or 503 (transient overload), try next fallback model
+          // For 404 (model not found) or 503 (transient overload), try next active fallback model
           continue;
         }
       } catch (err: any) {

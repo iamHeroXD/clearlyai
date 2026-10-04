@@ -1,7 +1,7 @@
 import { AIProvider, parseJsonOutput } from './types';
 import { ExplanationRequest, StructuredExplanation, ProviderConfig } from '../types';
 import { buildSystemPrompt, buildUserPrompt } from '../utils/systemPrompt';
-import { formatProviderError, AI_MODEL_CONFIG } from '../config/models';
+import { formatProviderError, AI_MODEL_CONFIG, validateAndResolveModel } from '../config/models';
 
 export class OpenAIProvider implements AIProvider {
   id = 'openai';
@@ -17,14 +17,15 @@ export class OpenAIProvider implements AIProvider {
       throw new Error('OpenAI API key is missing. Please set it in Extension Settings.');
     }
 
+    // Validate and resolve model before dispatching request
+    const { resolvedModel } = validateAndResolveModel('openai', config.model);
     const endpoint = config.endpoint || AI_MODEL_CONFIG.openai.endpoint;
-    const model = config.model || AI_MODEL_CONFIG.openai.defaultModel;
 
     const systemPrompt = customSystemPrompt || buildSystemPrompt(request, defaultLanguage);
     const userPrompt = buildUserPrompt(request);
 
     const payload = {
-      model,
+      model: resolvedModel,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },

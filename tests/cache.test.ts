@@ -7,8 +7,8 @@ describe('cacheService', () => {
     const req1: ExplanationRequest = { text: 'Quantum computing', mode: 'explain' };
     const req2: ExplanationRequest = { text: '  quantum computing  ', mode: 'explain' };
 
-    const key1 = generateCacheKey(req1, 'gemini', 'gemini-2.5-flash');
-    const key2 = generateCacheKey(req2, 'gemini', 'gemini-2.5-flash');
+    const key1 = generateCacheKey(req1, 'gemini', 'gemini-3.8-flash');
+    const key2 = generateCacheKey(req2, 'gemini', 'gemini-3.8-flash');
 
     expect(key1).toBe(key2);
   });

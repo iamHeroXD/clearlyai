@@ -159,7 +159,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   }`}
                 >
                   <div className="text-xs font-bold text-[var(--ink)]">Google Gemini (Recommended)</div>
-                  <div className="text-[11px] text-[var(--gray-600)] mt-0.5">Official gemini-2.5-flash via BYOK</div>
+                  <div className="text-[11px] text-[var(--gray-600)] mt-0.5">Official gemini-3.8-flash via BYOK</div>
                 </button>
 
                 <button

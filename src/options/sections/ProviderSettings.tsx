@@ -147,7 +147,7 @@ export const ProviderSettings: React.FC<ProviderSettingsProps> = ({
             </label>
             <input
               type="text"
-              placeholder="e.g. gemini-2.5-flash, gpt-4o-mini, claude-haiku-4-5-20251001, llama3.2"
+              placeholder="e.g. gemini-3.8-flash, gpt-4o-mini, claude-haiku-4-5-20251001, llama3.2"
               value={currentConfig.model || ''}
               onChange={(e) => onProviderConfigChange(activeProvider, { model: e.target.value })}
               className="w-full text-xs py-2 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
