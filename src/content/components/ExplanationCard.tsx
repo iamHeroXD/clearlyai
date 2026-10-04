@@ -165,6 +165,11 @@ export const ExplanationCard: React.FC<ExplanationCardProps> = ({
         <div className="clearly-header-brand">
           <span className="clearly-brand-mark" aria-hidden="true" />
           <span className="clearly-header-brand-title">Clearly</span>
+          {data && (
+            <span className="clearly-provider-badge">
+              {data.provider === 'ollama' ? 'Local AI' : 'Cloud AI'}
+            </span>
+          )}
         </div>
 
         <div className="clearly-header-actions">
@@ -284,22 +289,14 @@ export const ExplanationCard: React.FC<ExplanationCardProps> = ({
         {!loading && error && (
           <div className="clearly-error-box">
             <div className="clearly-error-headline">
-              <span>Couldn't complete request</span>
+              <span>Clearly couldn't process this request</span>
             </div>
             <div className="clearly-error-detail">
               {error.includes('context invalidated') || error.includes('Extension context')
                 ? 'Clearly was updated. Please refresh this tab to reconnect.'
                 : error}
             </div>
-            {error.toLowerCase().includes('api key') && typeof chrome !== 'undefined' && chrome.runtime?.openOptionsPage ? (
-              <button
-                type="button"
-                className="clearly-action-btn"
-                onClick={() => chrome.runtime.openOptionsPage()}
-              >
-                Configure API Key
-              </button>
-            ) : (
+            <div className="clearly-error-actions">
               <button
                 type="button"
                 className="clearly-action-btn"
@@ -307,7 +304,16 @@ export const ExplanationCard: React.FC<ExplanationCardProps> = ({
               >
                 {error.includes('context invalidated') ? 'Refresh Page' : 'Retry'}
               </button>
-            )}
+              {typeof chrome !== 'undefined' && chrome.runtime?.openOptionsPage && (
+                <button
+                  type="button"
+                  className="clearly-action-btn secondary"
+                  onClick={() => chrome.runtime.openOptionsPage()}
+                >
+                  Open Settings
+                </button>
+              )}
+            </div>
           </div>
         )}
 

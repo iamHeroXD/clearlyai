@@ -74,21 +74,27 @@ describe('AI Providers & Parser', () => {
     expect(legalRes.legalFlags?.riskLevel).toBe('high');
   });
 
-  it('AI_MODEL_CONFIG should strictly use official gemini-1.5-flash as default', async () => {
+  it('AI_MODEL_CONFIG should strictly use official gemini-2.5-flash as default', async () => {
     const { AI_MODEL_CONFIG } = await import('../src/config/models');
-    expect(AI_MODEL_CONFIG.gemini.defaultModel).toBe('gemini-1.5-flash');
+    expect(AI_MODEL_CONFIG.gemini.defaultModel).toBe('gemini-2.5-flash');
     expect(AI_MODEL_CONFIG.gemini.authHeader).toBe('x-goog-api-key');
     const modelIds = AI_MODEL_CONFIG.gemini.models.map((m: any) => m.id);
-    expect(modelIds).toContain('gemini-1.5-flash');
-    expect(modelIds).toContain('gemini-1.5-pro');
-    expect(modelIds).not.toContain('gemini-2.0-flash');
+    expect(modelIds).toContain('gemini-2.5-flash');
+    expect(modelIds).toContain('gemini-2.5-pro');
+    expect(modelIds).toContain('gemini-2.5-flash-lite');
+
+    // Anthropic official default
+    expect(AI_MODEL_CONFIG.anthropic.defaultModel).toBe('claude-haiku-4-5-20251001');
+
+    // OpenAI official default
+    expect(AI_MODEL_CONFIG.openai.defaultModel).toBe('gpt-4o-mini');
   });
 
   it('formatProviderError should format auth, quota, timeout, and network errors gracefully', async () => {
     const { formatProviderError } = await import('../src/config/models');
 
     const authErr = formatProviderError('gemini', 'API_KEY_INVALID');
-    expect(authErr).toContain('API key is invalid');
+    expect(authErr).toContain('API key is invalid or expired');
 
     const quotaErr = formatProviderError('gemini', 'Quota exceeded 429');
     expect(quotaErr).toContain('rate limit reached');
@@ -98,30 +104,44 @@ describe('AI Providers & Parser', () => {
 
     const netErr = formatProviderError('gemini', 'Failed to fetch network error');
     expect(netErr).toContain('Network connection to GEMINI failed');
+
+    const ollamaErr = formatProviderError('ollama', 'Connection refused');
+    expect(ollamaErr).toContain('Local Ollama is not reachable');
   });
 
-  it('migrateModelId should correctly migrate legacy models across providers', async () => {
+  it('migrateModelId should correctly migrate legacy models across providers and handle edge cases', async () => {
     const { migrateModelId } = await import('../src/config/models');
 
-    // Gemini
-    expect(migrateModelId('gemini', 'gemini-2.0-flash')).toBe('gemini-1.5-flash');
-    expect(migrateModelId('gemini', 'gemini-2.0-flash-exp')).toBe('gemini-1.5-flash');
-    expect(migrateModelId('gemini', 'gemini-pro')).toBe('gemini-1.5-flash');
-    expect(migrateModelId('gemini', 'gemini-1.5-pro')).toBe('gemini-1.5-pro');
+    // Gemini legacy migrations -> gemini-2.5-flash
+    expect(migrateModelId('gemini', 'gemini-1.5-flash')).toBe('gemini-2.5-flash');
+    expect(migrateModelId('gemini', 'gemini-1.5-pro')).toBe('gemini-2.5-pro');
+    expect(migrateModelId('gemini', 'gemini-2.0-flash')).toBe('gemini-2.5-flash');
+    expect(migrateModelId('gemini', 'gemini-2.0-flash-exp')).toBe('gemini-2.5-flash');
+    expect(migrateModelId('gemini', 'gemini-pro')).toBe('gemini-2.5-flash');
+    expect(migrateModelId('gemini', 'gemini-2.5-flash')).toBe('gemini-2.5-flash');
+    expect(migrateModelId('gemini', 'gemini-2.5-pro')).toBe('gemini-2.5-pro');
 
-    // OpenAI
+    // OpenAI legacy migrations -> gpt-4o-mini / gpt-4o
     expect(migrateModelId('openai', 'gpt-3.5-turbo')).toBe('gpt-4o-mini');
     expect(migrateModelId('openai', 'gpt-4')).toBe('gpt-4o');
     expect(migrateModelId('openai', 'gpt-4o-mini')).toBe('gpt-4o-mini');
+    expect(migrateModelId('openai', 'gpt-4o')).toBe('gpt-4o');
 
-    // Anthropic
-    expect(migrateModelId('anthropic', 'claude-2')).toBe('claude-3-5-haiku-20241022');
-    expect(migrateModelId('anthropic', 'claude-3-haiku-20240307')).toBe('claude-3-5-haiku-20241022');
-    expect(migrateModelId('anthropic', 'claude-3-5-sonnet-20241022')).toBe('claude-3-5-sonnet-20241022');
+    // Anthropic legacy migrations -> claude-haiku-4-5-20251001 / claude-sonnet-5.5
+    expect(migrateModelId('anthropic', 'claude-3-5-haiku-20241022')).toBe('claude-haiku-4-5-20251001');
+    expect(migrateModelId('anthropic', 'claude-3-5-sonnet-20241022')).toBe('claude-sonnet-5.5');
+    expect(migrateModelId('anthropic', 'claude-2')).toBe('claude-haiku-4-5-20251001');
+    expect(migrateModelId('anthropic', 'claude-3-haiku-20240307')).toBe('claude-haiku-4-5-20251001');
+    expect(migrateModelId('anthropic', 'claude-haiku-4-5-20251001')).toBe('claude-haiku-4-5-20251001');
 
-    // Undefined fallback
-    expect(migrateModelId('gemini', undefined)).toBe('gemini-1.5-flash');
+    // Edge Cases: missing model, empty string, whitespace, unknown model, corrupted value
+    expect(migrateModelId('gemini', undefined)).toBe('gemini-2.5-flash');
+    expect(migrateModelId('gemini', '')).toBe('gemini-2.5-flash');
+    expect(migrateModelId('gemini', '   ')).toBe('gemini-2.5-flash');
+    expect(migrateModelId('gemini', 'unknown-random-model-id')).toBe('gemini-2.5-flash');
     expect(migrateModelId('openai', undefined)).toBe('gpt-4o-mini');
+    expect(migrateModelId('anthropic', undefined)).toBe('claude-haiku-4-5-20251001');
+    expect(migrateModelId('ollama', undefined)).toBe('llama3.2');
   });
 
   describe('GeminiNanoProvider', () => {

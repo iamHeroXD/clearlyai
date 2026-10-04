@@ -50,7 +50,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   providers: {
     gemini: {
       apiKey: '',
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       endpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
     },
     nano: {
@@ -63,7 +63,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
     },
     anthropic: {
       apiKey: '',
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5-20251001',
       endpoint: 'https://api.anthropic.com/v1/messages',
     },
     ollama: {

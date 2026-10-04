@@ -1,7 +1,7 @@
 import { AIProvider, parseJsonOutput } from './types';
 import { ExplanationRequest, StructuredExplanation, ProviderConfig } from '../types';
 import { buildSystemPrompt, buildUserPrompt } from '../utils/systemPrompt';
-import { formatProviderError } from '../config/models';
+import { formatProviderError, AI_MODEL_CONFIG } from '../config/models';
 
 export class AnthropicProvider implements AIProvider {
   id = 'anthropic';
@@ -17,8 +17,8 @@ export class AnthropicProvider implements AIProvider {
       throw new Error('Anthropic API key is missing. Please set it in Extension Settings.');
     }
 
-    const endpoint = config.endpoint || 'https://api.anthropic.com/v1/messages';
-    const model = config.model || 'claude-3-5-haiku-20241022';
+    const endpoint = config.endpoint || AI_MODEL_CONFIG.anthropic.endpoint;
+    const model = config.model || AI_MODEL_CONFIG.anthropic.defaultModel;
 
     const systemPrompt = customSystemPrompt || buildSystemPrompt(request, defaultLanguage);
     const userPrompt = buildUserPrompt(request);

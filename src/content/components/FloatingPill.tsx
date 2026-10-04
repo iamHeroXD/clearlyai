@@ -36,12 +36,10 @@ export const FloatingPill: React.FC<FloatingPillProps> = ({
   const wordCount = selectedText.trim().split(/\s+/).filter(Boolean).length;
   const isSingleWord = wordCount <= 3;
 
-  let primaryLabel = 'Explain';
+  let primaryLabel = 'Simple';
   let primaryMode: ExplanationMode = 'simple';
 
-  // Smart Intent Resolution
   if (isSingleWord) {
-    // Single word / short phrase always defaults to Meaning / Definition
     primaryLabel = 'Define';
     primaryMode = 'define';
   } else if (detectedType === 'code') {
@@ -51,11 +49,8 @@ export const FloatingPill: React.FC<FloatingPillProps> = ({
     primaryLabel = 'Math';
     primaryMode = 'math';
   } else if (detectedType === 'legal') {
-    primaryLabel = 'Scan Risks';
+    primaryLabel = 'Legal';
     primaryMode = 'legal';
-  } else if (detectedType === 'paragraph') {
-    primaryLabel = 'TL;DR';
-    primaryMode = 'tldr';
   }
 
   return (
@@ -68,16 +63,59 @@ export const FloatingPill: React.FC<FloatingPillProps> = ({
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      {/* Brand Mark + Action Button */}
+      {/* Brand Button triggers smart primary lens */}
       <button
         type="button"
         className="clearly-pill-btn"
         onClick={() => onTrigger(primaryMode)}
-        title={`${primaryLabel} (Click or press Alt+C)`}
+        title={`Clearly (${primaryLabel})`}
       >
         <span className="clearly-brand-mark" aria-hidden="true" />
         <span className="clearly-pill-brand-text">Clearly</span>
         <span className="clearly-pill-badge">{primaryLabel}</span>
+      </button>
+
+      <div className="clearly-pill-divider" />
+
+      {/* Primary Action Quick Chips */}
+      {primaryMode !== 'simple' && (
+        <button
+          type="button"
+          className="clearly-pill-chip"
+          onClick={() => onTrigger('simple')}
+          title="Explain in simple terms"
+        >
+          Simple
+        </button>
+      )}
+
+      <button
+        type="button"
+        className="clearly-pill-chip"
+        onClick={() => onTrigger('eli5')}
+        title="Explain Like I'm 5 with an analogy"
+      >
+        ELI5
+      </button>
+
+      {primaryMode !== 'define' && (
+        <button
+          type="button"
+          className="clearly-pill-chip"
+          onClick={() => onTrigger('define')}
+          title="Dictionary definition & pronunciation"
+        >
+          Define
+        </button>
+      )}
+
+      <button
+        type="button"
+        className="clearly-pill-chip"
+        onClick={() => onTrigger('professional')}
+        title="Executive active-voice rewrite"
+      >
+        Rewrite
       </button>
 
       <div className="clearly-pill-divider" />
@@ -87,10 +125,11 @@ export const FloatingPill: React.FC<FloatingPillProps> = ({
         type="button"
         className="clearly-pill-more-btn"
         onClick={() => setMenuOpen(!menuOpen)}
-        title="Choose a specific lens"
-        aria-label="Choose lens"
+        title="More lenses (Code, Math, Legal, TL;DR, Translate)"
+        aria-label="More lenses"
       >
-        <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <span style={{ fontSize: '11px', fontWeight: 500, marginRight: '3px' }}>More</span>
+        <svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 6l4 4 4-4"/>
         </svg>
       </button>
@@ -107,7 +146,8 @@ export const FloatingPill: React.FC<FloatingPillProps> = ({
                 onTrigger(lens.id);
               }}
             >
-              <span>{lens.icon}</span> {lens.label}
+              <span className="clearly-menu-icon">{lens.icon}</span>
+              <span className="clearly-menu-label">{lens.label}</span>
             </button>
           ))}
         </div>

@@ -123,4 +123,42 @@ describe('AI Service Integration & Auto-Detection', () => {
     expect(result.legalFlags).toBeDefined();
     expect(result.legalFlags?.riskLevel).toBe('high');
   });
+
+  it('should auto-detect math formulas and route to math lens', async () => {
+    mockSettings.autoDetectMath = true;
+    const mathText = '\\int_0^\\infty e^{-x^2} dx = \\frac{\\sqrt{\\pi}}{2}';
+
+    const result = await processExplanationRequest(
+      {
+        text: mathText,
+        mode: 'explain'
+      },
+      mockSettings
+    );
+
+    expect(result.mode).toBe('math');
+  });
+
+  it('should attach active provider and model metadata to response', async () => {
+    const req = {
+      text: 'Superconductivity occurs at critical temperatures.',
+      mode: 'simple' as const
+    };
+
+    const result = await processExplanationRequest(req, mockSettings);
+    expect(result.provider).toBe('mock');
+    expect(result.model).toBe('mock-engine');
+  });
+
+  it('should handle long text cleanly without crashing', async () => {
+    const longText = 'Artificial intelligence '.repeat(100);
+    const req = {
+      text: longText,
+      mode: 'simple' as const
+    };
+
+    const result = await processExplanationRequest(req, mockSettings);
+    expect(result).toBeDefined();
+    expect(result.summary).toBeDefined();
+  });
 });

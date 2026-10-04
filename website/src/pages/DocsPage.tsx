@@ -87,7 +87,7 @@ export const DocsPage: React.FC = () => {
                 <div className="p-5 rounded-[var(--radius-md)] bg-[var(--paper-raised)] border border-[var(--line)] space-y-3">
                   <div>
                     <strong className="text-[var(--ink)] block mb-0.5">Google Gemini (Recommended Default):</strong>
-                    Obtain a key at <a href="https://aistudio.google.com" target="_blank" rel="noreferrer" className="underline text-[var(--ink)]">aistudio.google.com</a>. Defaults to official stable <code className="font-mono text-xs bg-[var(--paper)] px-1 rounded">gemini-1.5-flash</code> with header-authenticated requests and optional <code className="font-mono text-xs bg-[var(--paper)] px-1 rounded">gemini-1.5-pro</code>.
+                    Obtain a key at <a href="https://aistudio.google.com" target="_blank" rel="noreferrer" className="underline text-[var(--ink)]">aistudio.google.com</a>. Defaults to official stable <code className="font-mono text-xs bg-[var(--paper)] px-1 rounded">gemini-2.5-flash</code> with header-authenticated requests and optional <code className="font-mono text-xs bg-[var(--paper)] px-1 rounded">gemini-2.5-pro</code>.
                   </div>
                   <div>
                     <strong className="text-[var(--ink)] block mb-0.5">Anthropic Claude / OpenAI GPT-4o:</strong>

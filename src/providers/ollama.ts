@@ -1,7 +1,7 @@
 import { AIProvider, parseJsonOutput } from './types';
 import { ExplanationRequest, StructuredExplanation, ProviderConfig } from '../types';
 import { buildSystemPrompt, buildUserPrompt } from '../utils/systemPrompt';
-import { formatProviderError } from '../config/models';
+import { formatProviderError, AI_MODEL_CONFIG } from '../config/models';
 
 export class OllamaProvider implements AIProvider {
   id = 'ollama';
@@ -13,8 +13,8 @@ export class OllamaProvider implements AIProvider {
     defaultLanguage: string,
     customSystemPrompt?: string
   ): Promise<StructuredExplanation> {
-    const endpoint = config.endpoint || 'http://localhost:11434/api/generate';
-    const model = config.model || 'llama3.2';
+    const endpoint = config.endpoint || AI_MODEL_CONFIG.ollama.endpoint;
+    const model = config.model || AI_MODEL_CONFIG.ollama.defaultModel;
 
     const systemPrompt = customSystemPrompt || buildSystemPrompt(request, defaultLanguage);
     const userPrompt = buildUserPrompt(request);

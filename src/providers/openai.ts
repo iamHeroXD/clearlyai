@@ -1,7 +1,7 @@
 import { AIProvider, parseJsonOutput } from './types';
 import { ExplanationRequest, StructuredExplanation, ProviderConfig } from '../types';
 import { buildSystemPrompt, buildUserPrompt } from '../utils/systemPrompt';
-import { formatProviderError } from '../config/models';
+import { formatProviderError, AI_MODEL_CONFIG } from '../config/models';
 
 export class OpenAIProvider implements AIProvider {
   id = 'openai';
@@ -17,8 +17,8 @@ export class OpenAIProvider implements AIProvider {
       throw new Error('OpenAI API key is missing. Please set it in Extension Settings.');
     }
 
-    const endpoint = config.endpoint || 'https://api.openai.com/v1/chat/completions';
-    const model = config.model || 'gpt-4o-mini';
+    const endpoint = config.endpoint || AI_MODEL_CONFIG.openai.endpoint;
+    const model = config.model || AI_MODEL_CONFIG.openai.defaultModel;
 
     const systemPrompt = customSystemPrompt || buildSystemPrompt(request, defaultLanguage);
     const userPrompt = buildUserPrompt(request);

@@ -55,6 +55,8 @@ export interface StructuredExplanation {
   };
   rawText?: string;
   cached?: boolean;
+  provider?: string;
+  model?: string;
 }
 
 export interface HistoryItem {

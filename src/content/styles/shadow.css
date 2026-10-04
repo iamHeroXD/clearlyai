@@ -158,6 +158,27 @@
   margin: 0 1px;
 }
 
+.clearly-pill-chip {
+  font-family: var(--font);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  white-space: nowrap;
+  outline: none;
+}
+
+.clearly-pill-chip:hover {
+  color: var(--ink);
+  background: var(--paper-raised);
+  border-color: var(--line);
+}
+
 .clearly-pill-more-btn {
   padding: 3px 5px;
   border-radius: var(--radius-pill);
@@ -689,6 +710,24 @@
   line-height: 1.4;
 }
 
+.clearly-provider-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--gray-600);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  margin-left: 4px;
+}
+
+.clearly-error-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .clearly-action-btn {
   padding: 4px 10px;
   border-radius: var(--radius-pill);
@@ -698,7 +737,19 @@
   font-size: 11px;
   font-weight: 500;
   cursor: pointer;
+  transition: opacity 0.12s ease;
 }
+
+.clearly-action-btn:hover {
+  opacity: 0.9;
+}
+
+.clearly-action-btn.secondary {
+  background: var(--paper-raised);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+
 
 /* Animations */
 @keyframes clearlyPillIn {

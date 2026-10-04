@@ -59,6 +59,9 @@ export async function processExplanationRequest(
       settings.customSystemPrompt
     );
 
+    response.provider = activeProviderKey;
+    response.model = providerConfig.model || '';
+
     // Cache the response
     if (cacheKey && settings.cacheEnabled) {
       cacheService.set(cacheKey, response);

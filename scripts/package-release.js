@@ -126,6 +126,9 @@ function createDeterministicZip(sourceDir, destZipPath) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     entries.sort((a, b) => a.name.localeCompare(b.name));
     for (const entry of entries) {
+      if (entry.name.startsWith('.') || entry.name.endsWith('.map') || entry.name === 'Thumbs.db' || entry.name === 'desktop.ini') {
+        continue;
+      }
       const fullPath = path.join(dir, entry.name);
       const entryRelPath = relPath ? `${relPath}/${entry.name}` : entry.name;
       if (entry.isDirectory()) {
